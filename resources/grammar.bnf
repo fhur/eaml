@@ -1,0 +1,24 @@
+S = res-def+ (* A program is composed of 1 or more resource definitions *)
+
+<res-def> = color-def
+        | dimen-def
+        | style-def
+
+(* tokens *)
+identifier  = #"\w+"
+literal     = #"'.*?'"
+
+(* sub expressions *)
+invocation  = <'($'> identifier res-pointer* <')'>
+res-pointer = identifier | literal
+configs     = <'['> #"\w+"+ <']'>
+args        = <'['> identifier+ <']'>
+opts  = <'{'> assignment+ <'}'>
+exprs       = (assignment | invocation)+
+assignment  = #"\w+:\w+" <'='> (identifier | literal)
+            | #"\w+"     <'='> (identifier | literal)
+
+(* resource definitions *)
+color-def   = <'('> <'defcolor'> configs? identifier res-pointer <')'>
+dimen-def   = <'('> <'defdimen'> configs? identifier res-pointer <')'>
+style-def   = <'('> <'defstyle'> configs? identifier args? opts? exprs <')'>
