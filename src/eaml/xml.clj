@@ -1,17 +1,21 @@
 (ns eaml.xml
   (:require [clojure.string :refer [join]]))
 
-(defn style-struct-attr->xml
-  [attr]
-  (str "<item name=\"" (:name attr) "\">"
-       (last (:value attr)) ;; TODO change this
-       "</item>"))
+(defn- render-items
+  [items]
+  (map (fn [item]
+         (str "<item name=\"" (:name item) "\">"
+              (:value item)
+              "</item>"))
+       items))
 
-(defn style-struct->xml
-  [style-struct name-map]
-  (str "<style name=\"" (:name style-struct) "\">"
-       (->> (map style-struct-attr->xml (:attrs style-struct))
+(defn render-style-node
+  "Expects a structure with the following form:
+   {:name <style name>
+    :item [{:name <attr name> :value <attr value>}, ... ]}
+  returns the given style node as an xml string"
+  [node]
+  (str "<style name=\"" (:name node) "\">"
+       (->> (render-items (:items node))
             (join "\n"))
        "</style>"))
-
-
