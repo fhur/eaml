@@ -27,7 +27,7 @@
              (is-node-name? node# ~kw)))))
 
 (def-is-nodes :color-def :configs :identifier
-  :style-def :res-pointer :literal :opts
+  :style :res-pointer :literal :opts
   :invocation :exprs :assignment)
 
 (defn get-configs
