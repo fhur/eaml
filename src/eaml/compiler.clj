@@ -1,42 +1,53 @@
 (ns eaml.compiler
   (:require [eaml.error :refer :all]
-            [eaml.xml :refer :all]))
+            [eaml.util :refer :all]
+            [eaml.xml :refer xml]
+            [eaml.scope :as scope]
+            [eaml.nodes :as nodes]
+            [eaml.graph :as graph]
+            [eaml.parser :as parser]))
 
-(defn- build-name-map
-  [styles-list]
-  (group-by :name styles-list))
 
-(defn resolve-attr-value
-  [[val-type value]]
-  (if (= val-type "literal")
-    value
-    (raise (str "unsupported type " val-type))))
+(defn resolve-scope
+  [scope node]
+  (update-in node :attrs
+             (fn [attrs]
+               (replace (fn [attr]
+                          (update-in attr :value #(obtain scope %))
+                          attrs)))))
 
-(defn transpile-struct
-  [style-struct name-map]
-  (let [xml (style-struct->xml style-struct name-map)]
-    (for [config (:configs style-struct)]
-      {:path (str "values-" config "/")
-       :xml xml})))
+
+(defn create-writer-specs
+  [graph scope style-nodes]
+  (map (fn [node]
+         (->> (graph/solve-inheritance node graph)
+              (resolve-scope scope)))))
+
+
 
 (defn transpile
-  "Given a list of style structs as argument, returns an
-  object containing the relative path and transpiled xml
-  of each style struct."
-  [style-list]
-  (let [name-map (build-name-map style-list)]
-    (for [style-struct style-list]
-      (->> (transpile-struct style-struct name-map)))))
+  "Transpiling high level overview
 
-(def test-structs
-  [{:name "Button"
-    :configs ["v21"]
-    :attrs [{:name "android:textColor" :value ["literal" "#ff0000"]}
-            {:name "android:background" :value ["literal" "@nil"]}]}
+  Transpiling works as follows:
+  input: an abstract syntax tree (AST)
+  The AST is actually a list of parser nodes, some of them
+  will be colors, dimens, styles, etc.
+  1. Validate and obtain a list of nodes conformant
+     with the eaml.node specs. (nodes/normalize-ast)
+  2. Generate and validate the scope. (scope/create)
+  3. Generate and validate the inheritance graph (graph/create)
+  4. Loop through all nodes and obtain a WriterSpec
+     (the writer spec is a simple datastructure which
+     tells the transpiler where the file should be written
+     to and describes the contents of the final xml.
+  5. Pass the full list of WriterSpec to the xml ns which
+     will then generate and write the appropriate xml
+     at the appropriate file location"
+  [ast]
+  (let [nodes (node/normalize-ast ast)
+        style-nodes (node/filter-styles nodes)
+        scope (scope/create nodes)
+        graph (graph/create style-nodes)
+        writer-specs (create-writer-specs graph scope style-nodes)]
+    (xml/write writer-specs)))
 
-   {:name "FooStyle"
-    :configs ["default" "land"]
-    :attrs [{:name "qux" :value ["literal" "#ff0000"]}
-            {:name "foo:bar" :value ["literal" "@nil"]}]}])
-
-(println (transpile test-structs))
