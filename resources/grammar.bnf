@@ -1,24 +1,38 @@
 S = res-def+ (* A program is composed of 1 or more resource definitions *)
 
-<res-def> = color-def
+(* there are currently only 3 types of resources *)
+res-def = color-def
         | dimen-def
         | style-def
 
+
+<color-def> = 'color' identifier <':'> color-value <';'>
+<dimen-def> = 'dimen' identifier <':'> dimen-value <';'>
+<style-def> = 'style' identifier extends-expr? <'{'> attrs <'}'>
+
+color-value   = string-literal
+              | color-literal
+
+dimen-value   = string-literal
+              | dimen-literal
+
+config-def    = config-name (',' config-name)* <'{'> attrs <'}'>
+
+attrs         = (attr-def | config-def)+
+attr-def      = attr-name <':'> attr-value <';'>
+attr-value    = string-literal
+              | color-literal
+              | dimen-literal
+              | identifier
+              | native-pointer
+
+extends-expr  = '<' identifier (',' identifier)*
+
 (* tokens *)
-identifier  = #"\w+"
-literal     = #"'.*?'"
-
-(* sub expressions *)
-invocation  = <'($'> identifier res-pointer* <')'>
-res-pointer = identifier | literal
-configs     = <'['> #"\w+"+ <']'>
-args        = <'['> identifier+ <']'>
-opts  = <'{'> assignment+ <'}'>
-exprs       = (assignment | invocation)+
-assignment  = #"\w+:\w+" <'='> (identifier | literal)
-            | #"\w+"     <'='> (identifier | literal)
-
-(* resource definitions *)
-color-def   = <'('> <'defcolor'> configs? identifier res-pointer <')'>
-dimen-def   = <'('> <'defdimen'> configs? identifier res-pointer <')'>
-style-def   = <'('> <'defstyle'> configs? identifier args? opts? exprs <')'>
+<identifier>    = #"[a-zA-Z]\w+"
+string-literal  = #'".*?"'
+color-literal   = #'#[a-fA-F0-9]{3}([a-fA-F0-9]{3})?'
+dimen-literal   = #'\d+(sp|dp|px|dip)'
+config-name     = #"[a-z][a-z0-9]*(-[a-z0-9]+)*"
+<attr-name>     = #"[a-z]+(:\w+)*"
+native-pointer  = #"@\w+/\w+"
