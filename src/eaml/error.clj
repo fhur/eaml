@@ -2,6 +2,6 @@
 
 (defn raise!
   "Throws a RuntimeException with the given message as argument"
-  [message]
-  (throw (new RuntimeException message)))
+  [& messages]
+  (throw (new RuntimeException (apply str messages))))
 
