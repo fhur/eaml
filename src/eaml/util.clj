@@ -11,4 +11,20 @@
   [colls]
   (apply concat colls))
 
-
+(defn bfs
+  "Perform a BFS in the given graph.
+  (next-nodes-fn node graph) => takes a node as input and returns all nodes connected to that
+  node in the graph."
+  [next-nodes-fn initial-node graph]
+  (loop [queue [initial-node]
+         visited #{}
+         result []]
+    (if (empty? queue)
+      result
+      (let [node (first queue)
+            queue-tail (subvec queue 1)]
+        (if (visited node)
+          (recur queue-tail visited result)
+          (recur (conj-all queue-tail (next-nodes-fn node graph))
+                 (conj visited node)
+                 (conj result node)))))))

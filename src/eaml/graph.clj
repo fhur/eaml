@@ -34,27 +34,6 @@
   (:require [eaml.util :refer :all]))
 
 
-
-
-(defn bfs
-  "Perform a BFS in the given graph.
-  (next-nodes-fn node graph) => takes a node as input and returns all nodes connected to that
-  node in the graph."
-  [next-nodes-fn initial-node graph]
-  (loop [queue [initial-node]
-         visited #{}
-         result []]
-    (if (empty? queue)
-      result
-      (let [node (first queue)
-            queue-tail (subvec queue 1)]
-        (if (visited node)
-          (recur queue-tail visited result)
-          (recur (conj-all queue-tail (next-nodes-fn node graph))
-                 (conj visited node)
-                 (conj result node)))))))
-
-
 (defn get-node-by-id
   "Obtain a node in the graph given it's id"
   [id graph]
@@ -84,6 +63,7 @@
   (reduce (fn [graph node]
             (assoc graph (:id node) node))
           {}))
+
 
 (defn configurations
   "Obtain a list of all configurations supported by a given node"
@@ -128,38 +108,3 @@
        (reduce merge-nodes)))
 
 
-#_(
-
-style RedButton < Button {
-  android:textColor: "#f00"
-  android:background: "btn_red"
-  config:[v21] {
-    android:background: "btn_red_ripple"
-  }
-}
-
-{:node "style"
- :id "Button"
- :parents []
- :attrs [{:name "android:textSize" :value "12sp" :config :default}]}
-
-{:node "style"
- :id "RedButton"
- :parents "Button"
- :attrs [{:name "android:textColor" :value "#f00" :config :default}
-         {:name "android:textColor" :value "#f00" :config "v21"}
-         {:name "android:background" :value "btn_red" :config :default}
-         {:name "android:background" :value "btn_red_ripple" :config "v21"}]}
-
-{:id "RedButton"
- :config :default
- :attrs [{:name "android:textSize" :value "12sp"}
-         {:name "android:textColor" :value "#f00"}
-         {:name "android:background" :value "btn_red"}]}
-
-{:id "RedButton"
- :config "v21"
- :attrs [{:name "android:textSize" :value "12sp"}
-         {:name "android:textColor" :value "#f00"}
-         {:name "android:background" :value "btn_red_ripple"}]}
-)
