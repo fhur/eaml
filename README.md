@@ -1,16 +1,19 @@
 # eaml
 
+*WARNING:*
+This project is still very alpha. There might be several syntax changes
+and most features are not ready.
+
 eaml (pronounced e-mel) is the extended android modeling language. It is
 an XML preprocessor that will make your android resource definitions
 simple, readable, understandable and will greatly facilitate supporting
 several different configurations with a minimal code base.
 
-## Syntax and features
+## A short introduction
 
-This simple guide will give you a feel of the eaml syntax. For a more
-concise guide of the eaml syntax please see the
-[documentation](./doc/intro.md)
-section.
+This simple guide will give you a feel of the eaml syntax. For a complete
+understanding of the eaml syntax please see the [documentation](./doc/intro.md)
+section. (TODO: docs not ready)
 
 #### Multiple inheritance support
 It is often the case when you want a style class inherit or "share" the
@@ -20,80 +23,76 @@ you have a `BigButton` and a `RedButton` and you want to create a
 eaml as follows:
 
 ```
-# A style for big buttons
-(defstyle BigButton
-  android:padding=8dp
-  android:textSize=24sp)
+# A style for big buttons. Notice that BigButton
+# extends Button
+style BigButton < Button {
+  android:padding: 8dp
+  android:textSize: 24sp
+}
 
-(defstyle RedButton
-  android:textColor=#F00)
+# A style for red buttons
+style RedButton < Button {
+  android:textColor: #F00
+}
 
-(defstyle BigRedButton
-  (BigButton)
-  (RedButton)
-  android:text="I am a big red button")
+# A style for buttons that are both red and big
+style BigRedButton < BigButton, RedButton {
+  android:text: "I am a big red button"
+}
 ```
 
-#### Supporting multiple configurations
-Android supports multiple configurations by creating different sets of
-folders per configuration. eamls supports this from a language level as
-follows:
+#### Defining variables
+
+You can easily define different colors, dimens, etc. as follows:
 
 ```
-# Let's define a layout with list of user's
-(deflayout user_list
-  (ListView android:id="@+id/usersList"))
+# defining colors
+color primary_color: #ff0000
 
-# and a leyaout with the user's details
-(deflayout user_detailed
-  (LinearLayout
-    android:layout_width=match_parent
-    android:layout_height=match_parent
-    (TextView android:id="@+id/userName")
-    (TextView android:id="@+id/userLastName")
-    (Button android:id="@+id/btnRefresh")))
+# defining dimens
+dimen small_margins: 12dp
 
-# on a table we want to show both of them at the same time so
-# we include both layouts as follows
-(deflayout [land w600dp]
-  (LinearLayout users_screen
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    (user_list)
-    (user_detailed)))
-
+# Supporting multiple configurations
+dimen normal_text {
+  default: 12sp
+  w820dp: 13sp # make text bigger on 7" devices
+}
 ```
 
-This not only works for layouts, it works for any type of resource:
-```
-(defdrawable btn_background_red
-  (selector (item android:state_pressed="true"
-              (shape android:rectangular="true" (stroke android:color="#f22")))
-            (item
-              (shape android:rectangular="true" (stroke android:color="#f00")))))
+#### Support for multiple configurations
 
-(defdrawable [v21] btn_background_red
-  (ripple android:color="#f22"
-    (shape android:rectangular="true" (stroke (android:color="#f00")))))
-```
-
-#### Defining colors
-Colors can easily be defined with the following syntax
+eaml also aids in the managing of multiple configurations with a nice
+syntax:
 
 ```
-(defcolor red="#f00"
-          blue="#00f"
-          green="#0f0")
+style PrimaryButton < Button {
+  android:textColor: #fff
+  android:textSize: 12sp
+  android:background: @drawable/btn_primary
+  v21 {
+    android:background: @drawable/btn_primary_ripple
+  }
+}
 ```
 
-#### Functions
-There are some pre-defined functions that operate on colors and ohter
-types:
+#### Operations
+
+You can apply simple addition, multiplication, division, etc. between
+some eaml types:
 
 ```
-(defcolor red_1="#f00"
-          red_2=#(darken 20% red_1))
+dimen small_margins: 12dp
+dimen normal_margins: small_margins * 1.5
 ```
+
+#### Feature requests
+
+eaml is still in its infancy and we are very interested in understanding
+what problems android devs encounter when writing styles.
+
+Is there a feature that you really need but is not here?
+Please create a new issue explaining the feature + use case and
+it might end up on the next version :)
 
 ## License
 
