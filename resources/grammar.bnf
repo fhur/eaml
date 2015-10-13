@@ -1,4 +1,4 @@
-S = res-def+ (* A program is composed of 1 or more resource definitions *)
+<S> = res-def+ (* A program is composed of 1 or more resource definitions *)
 
 (* there are currently only 3 types of resources *)
 res-def = color-def
@@ -10,26 +10,27 @@ res-def = color-def
 <dimen-def> = 'dimen' identifier <':'> dimen-value <';'>
 <style-def> = 'style' identifier extends-expr? <'{'> attrs <'}'>
 
-color-value   = string-literal
-              | color-literal
+<color-value>   = string-literal
+                | color-literal
 
-dimen-value   = string-literal
-              | dimen-literal
+<dimen-value>   = string-literal
+                | dimen-literal
 
-config-def    = config-name (',' config-name)* <'{'> attrs <'}'>
+config-def    = config-name (<','> config-name)* <'{'> attrs <'}'>
 
-attrs         = (attr-def | config-def)+
+attrs         = (attr-def | config-def)*
 attr-def      = attr-name <':'> attr-value <';'>
 attr-value    = string-literal
               | color-literal
               | dimen-literal
-              | identifier
               | native-pointer
+              | pointer
 
-extends-expr  = '<' identifier (',' identifier)*
+extends-expr  = <'<'> identifier (<','> identifier)*
 
 (* tokens *)
 <identifier>    = #"[a-zA-Z]\w+"
+pointer         = #"[a-zA-Z]\w+"
 string-literal  = #'".*?"'
 color-literal   = #'#[a-fA-F0-9]{3}([a-fA-F0-9]{3})?'
 dimen-literal   = #'\d+(sp|dp|px|dip)'
