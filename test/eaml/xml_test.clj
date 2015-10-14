@@ -18,15 +18,14 @@
 
 
 (expected-when "test render-style-node" render-style-node
-  :when [{:name "Foo"}] matches? "<style name=\"Foo\"></style>"
+  :when ["Foo" []] matches? "<style name=\"Foo\"></style>"
 
-  :when [{:name "Foo" :items []}] matches? "<style name=\"Foo\"></style>"
+  :when ["Foo" []] matches? "<style name=\"Foo\"></style>"
 
-  :when [{:name "Foo"
-          :items [{:name "foo"
-                   :value "bar"}
-                  {:name "android:textSize"
-                   :value "12sp"}]}] matches?
+  :when ["Foo" [{:name "foo"
+                 :value "bar"}
+                {:name "android:textSize"
+                 :value "12sp"}]] matches?
         "<style name=\"Foo\">
           <item name=\"foo\">bar</item>
           <item name=\"android:textSize\">12sp</item>
