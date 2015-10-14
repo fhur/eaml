@@ -34,7 +34,7 @@
                       initial-node test-graph))
   when [:b] = [:b]
   when [:e] = [:e :f :g]
-  when [:a] = [:b :c :d :e :f :g])
+  when [:a] = [:a :b :c :d :e :f :g])
 
 
 (expected-when "flat-coll flattens a coll of colls" flat-coll
