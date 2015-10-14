@@ -46,12 +46,6 @@
   (:require [eaml.error :refer :all]
             [eaml.util :refer :all]))
 
-(defn normalize-ast
-  "See eaml.parser for a description of the structure of the AST."
-  [ast]
-  ;; TODO: implement thid method
-  ast)
-
 
 (defn is-attr-in-config
   "Returns true if the given attribute belongs to the given config"
