@@ -6,10 +6,17 @@
 (defn parse-first
   [string]
   (->> (parser string)
-       (first)
-       (normalize-node)))
+       (normalize-nodes)
+       (first)))
 
-(expected-when "parsing colors" parse-first
+
+(defn parse-all
+  [string]
+  (->> (parser string)
+       (normalize-nodes)))
+
+
+(expected-when "parsing a single color" parse-first
   when ["color red: #ff0000;"]
      = {:id "red"
         :node :color
@@ -20,7 +27,8 @@
         :node :color
         :value [:literal "#f12"]})
 
-(expected-when "parsing dimens" parse-first
+
+(expected-when "parsing a single dimens" parse-first
   when ["dimen small_margins: 12dp;"]
      = {:id "small_margins"
         :node :dimen
@@ -31,7 +39,8 @@
         :node :dimen
         :value [:literal "12sp"]})
 
-(expected-when "parsing styles" parse-first
+
+(expected-when "parsing a single style" parse-first
   when ["style Foo {}"]
      = {:id "Foo"
         :node :style
@@ -74,3 +83,20 @@
                 {:name "android:textSize" :value [:pointer "small_text"] :config :default}
                 {:name "android:text" :value [:literal "some text"] :config :default}]})
 
+
+(expected-when "parsing several nodes" parse-all
+  when ["color red: #f00;
+         dimen normal_paddings: 12dp;
+         style Foo < Bar {
+           foo: 12dp;
+         }"]
+     = [{:id "red"
+         :node :color
+         :value [:literal "#f00"]}
+        {:id "normal_paddings"
+         :node :dimen
+         :value [:literal "12dp"]}
+        {:id "Foo"
+         :node :style
+         :parents ["Bar"]
+         :attrs [{:name "foo" :value [:literal "12dp"] :config :default}]}])
