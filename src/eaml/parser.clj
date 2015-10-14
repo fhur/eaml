@@ -86,11 +86,22 @@
 (def parser (insta/parser (clojure.java.io/resource "grammar.bnf")
                           :auto-whitespace :standard))
 
+(defn parse-str
+  "Parses and normalizes a string. Raises an error if it is not possible to parse
+  the given string."
+  [string]
+  (let [parsed (parser string)]
+    (if (insta/failure? parsed)
+      (do (instaparse.failure/pprint-failure (insta/get-failure parsed))
+          (raise! "Error while parsing"))
+      (normalize-nodes parsed))))
+
+
 (defn parse-dir
   [root-path]
   (->> (filter-tree root-path (extension-filter "eaml"))
        (map read-file)
-       (map parser)
+       (map parse-str)
        (reduce conj)))
 
 
