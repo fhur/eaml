@@ -31,7 +31,8 @@
   - parent-path(BigButton) = [BigButton Button]
   - parent-path(BigRedButton) = [BigRedButton, BigButton, RedButton, Button]"
 
-  (:require [eaml.util :refer :all]))
+  (:require [eaml.util :refer :all]
+            [eaml.node :as node]))
 
 
 (defn get-node-by-id
@@ -44,7 +45,7 @@
   "Obtain a lazy list that references all the direct parents of a given node
   in the graph"
   [node graph]
-  (map get-node-by-id (:parents node)))
+  (map #(get-node-by-id % graph) (:parents node)))
 
 
 (defn parent-path
@@ -62,26 +63,18 @@
   [nodes]
   (reduce (fn [graph node]
             (assoc graph (:id node) node))
-          {}))
+          {} nodes))
 
 
-(defn configurations
-  "Obtain a list of all configurations supported by a given node"
-  [node]
-  (vec (recur (fn [configs attr]
-                (conj configs (:config attr)))
-              #{})))
-
-
-(defn merge-nodes
+(defn- merge-nodes
   "Merge two nodes' attributes. Preference on node1 whenever there is a conflict."
   [node1 node2]
-  (loop [attrs1 (attributes node1)
-         attrs2 (attributes node2)
+  (loop [attrs1 (node/attributes node1)
+         attrs2 (node/attributes node2)
          merged-attrs []
          visited #{}]
     (if (and (empty? attrs1) (empty? attrs2))
-      (assoc node1 :attrs merged)
+      (assoc node1 :attrs merged-attrs)
       (let [next1 (first attrs1)
             next2 (first attrs2)
             name1 (:name next1)
@@ -95,10 +88,10 @@
               (and (visited name1) (not (visited name2)))
                 (recur rest1 rest2 (conj merged-attrs next2) (conj visited name2))
 
-              (and (not (visited name1) (visited name2)))
+              (and (not (visited name1)) (visited name2))
                 (recur rest1 rest2 (conj merged-attrs next1) (conj visited name1))
 
-              (and (not (visited name1) (not (visited name2))))
+              (and (not (visited name1)) (not (visited name2)))
                 (recur rest1 attrs2 (conj merged-attrs next1) (conj visited name1)))))))
 
 
