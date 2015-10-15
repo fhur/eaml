@@ -17,6 +17,10 @@
   [node]
   (#{:color :dimen "color" "dimen"} (:node node)))
 
+(defn get-attr-value
+  [node]
+  (:value node))
+
 
 (defn create
   "Create the scope"
@@ -26,9 +30,9 @@
               (if (contains? scope id)
                 (raise! (str "Scope already contains a mapping for "id": "(scope id)))
                 (if (scopable? node)
-                  (assoc scope id node)
+                  (assoc scope id (get-attr-value node))
                   scope))))
-          nodes))
+          {} nodes))
 
 (defn- get-id
   "Return the identifier of an attr-value"
@@ -50,7 +54,11 @@
 
 (defn get-pointer
   [scope attr-value]
-  (get scope (second attr-value)))
+  (let [[_ id] attr-value
+        resolved (get scope id)]
+    (if (literal? resolved)
+      resolved
+      (raise! "Unsupported operations: pointer to pointer for " attr-value))))
 
 
 (defn has?
