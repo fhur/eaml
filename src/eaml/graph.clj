@@ -32,6 +32,7 @@
   - parent-path(BigRedButton) = [BigRedButton, BigButton, RedButton, Button]"
 
   (:require [eaml.util :refer :all]
+            [eaml.error :refer :all]
             [eaml.node :as node]))
 
 
@@ -65,8 +66,19 @@
             (assoc graph (:id node) node))
           {} nodes))
 
+(defn- visited?
+  "Used in merge-nodes. A node is considered visited if it is either nil or
+  contained in the visited-set"
+  [visited-set node]
+  (or (nil? node) (visited-set (:name node))))
 
-(defn- merge-nodes
+(defn- add-visited
+  [visited-set node]
+  (conj visited-set (:name node)))
+
+(def not-visited? (complement visited?))
+
+(defn merge-nodes
   "Merge two nodes' attributes. Preference on node1 whenever there is a conflict."
   [node1 node2]
   (loop [attrs1 (node/attributes node1)
@@ -77,27 +89,26 @@
       (assoc node1 :attrs merged-attrs)
       (let [next1 (first attrs1)
             next2 (first attrs2)
-            name1 (:name next1)
-            name2 (:name next2)
             rest1 (rest attrs1)
             rest2 (rest attrs2)]
 
-        (cond (and (visited name1) (visited name2))
+        (cond (and (visited? visited next1) (visited? visited next2))
                 (recur rest1 rest2 merged-attrs visited)
 
-              (and (visited name1) (not (visited name2)))
-                (recur rest1 rest2 (conj merged-attrs next2) (conj visited name2))
+              (and (visited? visited next1) (not-visited? visited next2))
+                (recur rest1 rest2 (conj merged-attrs next2) (add-visited visited next2))
 
-              (and (not (visited name1)) (visited name2))
-                (recur rest1 rest2 (conj merged-attrs next1) (conj visited name1))
+              (and (not-visited? visited next1) (visited? visited next2))
+                (recur rest1 rest2 (conj merged-attrs next1) (add-visited visited next1))
 
-              (and (not (visited name1)) (not (visited name2)))
-                (recur rest1 attrs2 (conj merged-attrs next1) (conj visited name1)))))))
+              (and (not-visited? visited next1) (not-visited? visited next2))
+                (recur rest1 attrs2 (conj merged-attrs next1) (add-visited visited next1)))))))
 
 
 (defn solve-inheritance
   [node graph]
   (->> (parent-path node graph)
        (reduce merge-nodes)))
+
 
 
