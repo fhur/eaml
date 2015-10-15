@@ -1,28 +1,27 @@
 (ns eaml.compiler
   (:require [eaml.error :refer :all]
             [eaml.util :refer :all]
-            [eaml.xml :refer xml]
+            [eaml.xml :as xml]
             [eaml.scope :as scope]
-            [eaml.nodes :as nodes]
+            [eaml.node :as node]
             [eaml.graph :as graph]
             [eaml.parser :as parser]))
 
 
 (defn resolve-scope
   [scope node]
-  (update-in node :attrs
+  (update-in node [:attrs]
              (fn [attrs]
-               (replace (fn [attr]
-                          (update-in attr :value #(obtain scope %))
-                          attrs)))))
+               (map (fn [attr]
+                      (update-in attr [:value] #(scope/obtain scope %)))
+                    attrs))))
 
 
 (defn create-writer-specs
   [graph scope style-nodes]
-  (map (fn [node]
-         (->> (graph/solve-inheritance node graph)
-              (resolve-scope scope)))))
-
+  (for [node style-nodes]
+    (let [solved-inheritance (graph/solve-inheritance node graph)]
+      (resolve-scope scope solved-inheritance))))
 
 
 (defn transpile
@@ -44,10 +43,15 @@
      will then generate and write the appropriate xml
      at the appropriate file location"
   [ast]
-  (let [nodes (node/normalize-ast ast)
+  (let [nodes ast
         style-nodes (node/filter-styles nodes)
         scope (scope/create nodes)
         graph (graph/create style-nodes)
         writer-specs (create-writer-specs graph scope style-nodes)]
     (xml/write writer-specs)))
+
+(defn transpile-str
+  [string]
+  (transpile (parser/parse-str string)))
+
 
