@@ -5,16 +5,7 @@
 
 (defn parse-first
   [string]
-  (->> (parser string)
-       (normalize-nodes)
-       (first)))
-
-
-(defn parse-all
-  [string]
-  (->> (parser string)
-       (normalize-nodes)))
-
+  (first (parse-str string)))
 
 (expected-when "parsing a single color" parse-first
   when ["color red: #ff0000;"]
@@ -25,7 +16,12 @@
   when ["color some_other_color: #f12;"]
      = {:id "some_other_color"
         :node :color
-        :value [:literal "#f12"]})
+        :value [:literal "#f12"]}
+
+  when ["color some_color: some_other;"]
+     = {:id "some_color"
+        :node :color
+        :value [:pointer "some_other"]})
 
 
 (expected-when "parsing a single dimens" parse-first
@@ -84,7 +80,7 @@
                 {:name "android:text" :value [:literal "some text"] :config :default}]})
 
 
-(expected-when "parsing several nodes" parse-all
+(expected-when "parsing several nodes" parse-str
   when ["color red: #f00;
          dimen normal_paddings: 12dp;
          style Foo < Bar {

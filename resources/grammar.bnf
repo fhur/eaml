@@ -12,9 +12,11 @@ res-def = color-def
 
 <color-value>   = string-literal
                 | color-literal
+                | pointer
 
 <dimen-value>   = string-literal
                 | dimen-literal
+                | pointer
 
 config-def    = config-name (<','> config-name)* <'{'> attrs <'}'>
 
