@@ -57,8 +57,8 @@
   (let [[_ id] attr-value
         resolved (get scope id)]
     (if (literal? resolved)
-      resolved
-      (raise! "Unsupported operations: pointer to pointer for " attr-value))))
+      (get-literal resolved)
+      (get-pointer scope resolved))))
 
 
 (defn has?
