@@ -102,6 +102,6 @@
   (->> (filter-tree root-path (extension-filter "eaml"))
        (map read-file)
        (map parse-str)
-       (reduce conj)))
+       (flat-coll)))
 
 

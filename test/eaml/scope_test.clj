@@ -24,4 +24,9 @@
   when [test-scope [:pointer "margins_big"]] = "12dp"
   when [test-scope [:pointer "margins_normal"]] = "4dp")
 
-
+(expected-when "has? returns true if a value is in the scope" has?
+  when [test-scope [:literal "foobar"]] = true
+  when [test-scope [:pointer "red1"]] = true
+  when [test-scope [:pointer "foobar"]] = false
+  when [test-scope [:pointer "margins_normal"]] = true
+  when [test-scope [:pointer "margins_big"]] = true)

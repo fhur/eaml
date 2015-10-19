@@ -17,7 +17,7 @@
   [node]
   (#{:color :dimen "color" "dimen"} (:node node)))
 
-(defn get-attr-value
+(defn- get-attr-value
   [node]
   (:value node))
 
@@ -43,6 +43,7 @@
   [attr-value]
   (#{"literal" :literal} (first attr-value)))
 
+
 (defn get-literal
   [attr-value]
   (second attr-value))
@@ -51,6 +52,7 @@
 (defn pointer?
   [attr-value]
   (#{"pointer" :pointer} (first attr-value)))
+
 
 (defn get-pointer
   [scope attr-value]
@@ -64,8 +66,10 @@
 (defn has?
   "Returns true if the scope can resolve the given attr-value"
   [scope attr-value]
-  (or (literal? attr-value) ;; literals can always be resolved
-      (contains? scope (get-id attr-value)))) ;; check if the id is mapped to the scope
+  (if (literal? attr-value) ;; literals can always be resolved
+    true
+    (contains? scope (get-id attr-value)))) ;; check if the id is mapped to the scope
+
 
 (defn obtain
   "Obtain the current mapping for a given attr-value"

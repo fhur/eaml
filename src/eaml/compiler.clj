@@ -8,7 +8,7 @@
             [eaml.parser :as parser]))
 
 
-(defn resolve-scope
+(defn- resolve-scope
   [scope node]
   (update-in node [:attrs]
              (fn [attrs]
@@ -17,7 +17,7 @@
                     attrs))))
 
 
-(defn create-writer-specs
+(defn- create-writer-specs
   [graph scope style-nodes]
   (for [node style-nodes]
     (let [solved-inheritance (graph/solve-inheritance node graph)]
@@ -25,7 +25,8 @@
 
 
 (defn transpile
-  "Transpiling high level overview
+  "Transpiling high level overview.
+  TODO: update this doc string, it's outdated.
 
   Transpiling works as follows:
   input: an abstract syntax tree (AST)
@@ -42,16 +43,22 @@
   5. Pass the full list of WriterSpec to the xml ns which
      will then generate and write the appropriate xml
      at the appropriate file location"
-  [ast]
+  [ast writer-fn]
   (let [nodes ast
         style-nodes (node/filter-styles nodes)
         scope (scope/create nodes)
         graph (graph/create style-nodes)
         writer-specs (create-writer-specs graph scope style-nodes)]
-    (xml/write writer-specs)))
+    (writer-fn writer-specs)))
+
+(defn dir-writer
+  [dir]
+  (fn [nodes]
+    (xml/write! dir nodes)))
 
 (defn transpile-str
   [string]
-  (transpile (parser/parse-str string)))
+  (transpile (parser/parse-str string)
+             xml/write-str))
 
 

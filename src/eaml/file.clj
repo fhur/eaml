@@ -41,3 +41,22 @@
           (recur (into (rest files) (.listFiles file)) result)
           (recur (rest files) (if (f file) (conj result file) result)))))))
 
+
+(defn mkdirs!
+  "Given a list of files or paths, creates any missing directories for every
+  file or file-path."
+  [file-paths]
+  (for [file-path file-paths]
+    (let [file (as-file file-path)]
+      (println "Making dirs for " file)
+      (.mkdirs file))))
+
+(defn path-concat
+  "Concatenates to file paths, the first one being a parent
+  of the second one."
+  [path1 path2]
+  (let [clean-path1 (str (File. path1))
+        clean-path2 (.replaceAll (str (File. path2)) "\\./" "")
+        joined-path (str clean-path1 "/" clean-path2)]
+    (str (File. joined-path))))
+
