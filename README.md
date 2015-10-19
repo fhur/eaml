@@ -9,6 +9,9 @@ an XML preprocessor that will make your android resource definitions
 simple, readable, understandable and will greatly facilitate supporting
 several different configurations with a minimal code base.
 
+Read the [release notes](./doc/release_notes.md) to see what features
+are implemented in the current release.
+
 ## A short introduction
 
 This simple guide will give you a feel of the eaml syntax. For a complete
