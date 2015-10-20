@@ -32,7 +32,7 @@
   given filter function f. To match by extension see the extension-filter
   function."
   [root-dir-path f]
-  (loop [files [(File. root-dir-path)]
+  (loop [files [(as-file root-dir-path)]
          result []]
     (if (empty? files)
       result
@@ -46,9 +46,8 @@
   "Given a list of files or paths, creates any missing directories for every
   file or file-path."
   [file-paths]
-  (for [file-path file-paths]
+  (doseq [file-path file-paths]
     (let [file (as-file file-path)]
-      (println "Making dirs for " file)
       (.mkdirs file))))
 
 (defn path-concat

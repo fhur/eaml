@@ -19,30 +19,27 @@
 
 (defn- create-writer-specs
   [graph scope style-nodes]
-  (for [node style-nodes]
-    (let [solved-inheritance (graph/solve-inheritance node graph)]
-      (resolve-scope scope solved-inheritance))))
+  (->> (map #(graph/solve-inheritance % graph) style-nodes)
+       (map #(resolve-scope scope %))))
 
 
 (defn transpile
-  "Transpiling high level overview.
-  TODO: update this doc string, it's outdated.
+  "Transpiling high level overview
 
   Transpiling works as follows:
   input: an abstract syntax tree (AST)
   The AST is actually a list of parser nodes, some of them
   will be colors, dimens, styles, etc.
-  1. Validate and obtain a list of nodes conformant
-     with the eaml.node specs. (nodes/normalize-ast)
+  1. Node structure is documented in eaml.nodes
   2. Generate and validate the scope. (scope/create)
   3. Generate and validate the inheritance graph (graph/create)
-  4. Loop through all nodes and obtain a WriterSpec
-     (the writer spec is a simple datastructure which
-     tells the transpiler where the file should be written
-     to and describes the contents of the final xml.
-  5. Pass the full list of WriterSpec to the xml ns which
-     will then generate and write the appropriate xml
-     at the appropriate file location"
+  4. Solve the inheritance graph for each node
+  5. Solve the scope for each node in the graph.
+
+  ast => a list of nodes
+  writer-fn => a function which takes a list of nodes
+  as argument and writes them. See dir-writer for an example
+  implementation."
   [ast writer-fn]
   (let [nodes ast
         style-nodes (node/filter-styles nodes)
@@ -54,11 +51,15 @@
 (defn dir-writer
   [dir]
   (fn [nodes]
-    (xml/write! dir nodes)))
+    (xml/write-to-file! dir nodes)))
+
+(defn str-writer
+  []
+  (fn [nodes] (xml/write-str nodes)))
 
 (defn transpile-str
   [string]
   (transpile (parser/parse-str string)
-             xml/write-str))
+             (str-writer)))
 
 

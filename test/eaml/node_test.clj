@@ -32,3 +32,8 @@
 
 (expected-when "filter-styles returns only style nodes" filter-styles
   when [nodes] with-ids ["Button" "LargeButton"])
+
+(expected-when "style? is true for style nodes" style?
+  when [{:node :foo}] = false
+  when [{:node :style}] = true
+  when [{}] = false)

@@ -47,12 +47,6 @@
             [eaml.util :refer :all]))
 
 
-(defn is-attr-in-config
-  "Returns true if the given attribute belongs to the given config"
-  [attr config]
-  (= (:config attr) config))
-
-
 (defn attributes
   "The attributes of given node."
   [node]
@@ -62,8 +56,7 @@
 (defn style?
   "True if the given node is a style node"
   [node]
-  (or (= (:node node) "style")
-      (= (:node node) :style)))
+  (= (:node node) :style))
 
 
 (defn filter-styles
