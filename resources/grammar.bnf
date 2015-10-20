@@ -1,39 +1,40 @@
 <S> = res-def+ (* A program is composed of 1 or more resource definitions *)
 
 (* there are currently only 3 types of resources *)
-res-def = color-def
-        | dimen-def
-        | style-def
+<res-def> = simple-res-def
+          | style-def
 
+(* simple resources *)
+simple-res-def     = simple-res-type identifier <':'> simple-res-value <';'>
+<simple-res-type>  = 'color' | 'dimen' | 'bool' | 'integer' | 'string'
+<simple-res-value> = string-literal
+                   | pointer
+                   | color-literal
+                   | dimen-literal
+                   | native-pointer
+                   | boolean-literal
+                   | integer-literal
 
-<color-def> = 'color' identifier <':'> color-value <';'>
-<dimen-def> = 'dimen' identifier <':'> dimen-value <';'>
-<style-def> = 'style' identifier extends-expr? <'{'> attrs <'}'>
-
-<color-value>   = string-literal
-                | color-literal
-                | pointer
-
-<dimen-value>   = string-literal
-                | dimen-literal
-                | pointer
-
+(* styles *)
+style-def     = <'style'> identifier extends-expr <'{'> attrs <'}'>
 config-def    = config-name (<','> config-name)* <'{'> attrs <'}'>
 
 attrs         = (attr-def | config-def)*
 attr-def      = attr-name <':'> attr-value <';'>
-attr-value    = string-literal
+<attr-value>  = string-literal
               | color-literal
               | dimen-literal
               | native-pointer
               | pointer
 
-extends-expr  = <'<'> identifier (<','> identifier)*
+extends-expr  = (<'<'> identifier (<','> identifier)*)?
 
 (* tokens *)
 <identifier>    = #"[a-zA-Z]\w+"
 pointer         = #"[a-zA-Z]\w+"
-string-literal  = #'".*?"'
+boolean-literal = 'true' | 'false'
+string-literal  = #'".*?"' | #"'.*?'"
+integer-literal = #"\d+"
 color-literal   = #'#[a-fA-F0-9]{3}([a-fA-F0-9]{3})?'
 dimen-literal   = #'\d+(sp|dp|px|dip)'
 config-name     = #"[a-z][a-z0-9]*(-[a-z0-9]+)*"

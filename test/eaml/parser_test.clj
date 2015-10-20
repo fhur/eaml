@@ -23,6 +23,24 @@
         :node :color
         :value [:pointer "some_other"]})
 
+(expected-when "parsing a boolean" parse-first
+  when ["bool is_foo: true;"]
+     = {:id "is_foo"
+        :node :bool
+        :value [:literal "true"]})
+
+(expected-when "parsing a string" parse-first
+  when ["string a_string: 'foobar';"]
+     = {:id "a_string"
+        :node :string
+        :value [:literal "foobar"]})
+
+(expected-when "parsing an integer" parse-first
+  when ["integer foo: 123;"]
+     = {:id "foo"
+        :node :integer
+        :value [:literal "123"]})
+
 
 (expected-when "parsing a single dimens" parse-first
   when ["dimen small_margins: 12dp;"]
