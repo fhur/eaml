@@ -4,19 +4,21 @@
 First minimal working version:
 - Support for `color` and `dimens` e.g. `color primary_color: #f00;`
 - Multiple inheritance between styles
-  ```
-  style BigRedButton < RedButton, BigButton {
-    # your code here
-  }
-  ```
+```
+style BigRedButton < RedButton, BigButton {
+  # your code here
+}
+```
 - Nested directories
   You can organize your files with nested directores:
-  ```
-  ./styles/buttons/my_buttons.eaml
-                  /more_buttons.eaml
-          /vars/colors.eaml
-               /sizes.eaml
-  ```
+```
+./styles/
+├── variables.eaml
+├── common_styles.eaml
+└── buttons
+  ├── buttons.eaml
+  └── more_buttons.eaml
+```
 - One global scope.
   Currently there is only one scope: the global scope. This basically
   means that a `color foo` defined in one file is accesible everywhere.
