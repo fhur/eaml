@@ -45,7 +45,7 @@
 (defn mkdirs!
   "Given a list of files or paths, creates any missing directories for every
   file or file-path."
-  [file-paths]
+  [& file-paths]
   (doseq [file-path file-paths]
     (let [file (as-file file-path)]
       (.mkdirs file))))

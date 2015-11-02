@@ -7,7 +7,6 @@
             [eaml.graph :as graph]
             [eaml.parser :as parser]))
 
-
 (defn- resolve-scope
   [scope node]
   (update-in node [:attrs]
@@ -18,9 +17,8 @@
 
 
 (defn- create-writer-specs
-  [graph scope style-nodes]
-  (->> (map #(graph/solve-inheritance % graph) style-nodes)
-       (map #(resolve-scope scope %))))
+  [scope style-nodes]
+  (map #(resolve-scope scope %) style-nodes))
 
 
 (defn transpile
@@ -44,8 +42,7 @@
   (let [nodes ast
         style-nodes (node/filter-styles nodes)
         scope (scope/create nodes)
-        graph (graph/create style-nodes)
-        writer-specs (create-writer-specs graph scope style-nodes)]
+        writer-specs (create-writer-specs scope style-nodes)]
     (writer-fn writer-specs)))
 
 (defn dir-writer

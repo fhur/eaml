@@ -58,28 +58,28 @@
   when ["style Foo {}"]
      = {:id "Foo"
         :node :style
-        :parents []
+        :parent nil
         :attrs []}
 
   when ["style FooBar < Foo {}"]
      = {:id "FooBar"
         :node :style
-        :parents ["Foo"]
+        :parent "Foo"
         :attrs []}
 
-  when ["style FooBar < Boo, Foo {}"]
+  when ["style FooBar < Boo {}"]
      = {:id "FooBar"
         :node :style
-        :parents ["Boo" "Foo"]
+        :parent "Boo"
         :attrs []}
 
-  when ["style FooBar123 < Foo, Bar, Baz {
+  when ["style FooBar123 < Foo {
            android:textColor: #ff0000;
            android:textSize: 12sp;
          }"]
      = {:id "FooBar123"
         :node :style
-        :parents ["Foo" "Bar" "Baz"]
+        :parent "Foo"
         :attrs [{:name "android:textColor" :value [:literal "#ff0000"] :config :default}
                 {:name "android:textSize" :value [:literal "12sp"] :config :default}]}
 
@@ -91,7 +91,7 @@
         }"]
      = {:id "Foo"
         :node :style
-        :parents ["Bar"]
+        :parent "Bar"
         :attrs [{:name "android:textColor" :value [:literal "#123"] :config :default}
                 {:name "android:background" :value [:literal "@drawable/foo_drawable"] :config :default}
                 {:name "android:textSize" :value [:pointer "small_text"] :config :default}
@@ -112,5 +112,5 @@
          :value [:literal "12dp"]}
         {:id "Foo"
          :node :style
-         :parents ["Bar"]
+         :parent "Bar"
          :attrs [{:name "foo" :value [:literal "12dp"] :config :default}]}])

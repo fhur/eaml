@@ -17,8 +17,10 @@
    {:name <style name>
     :item [{:name <attr name> :value <attr value>}, ... ]}
   returns the given style node as an xml string"
-  [style-name items]
-  (str "<style name=\"" style-name "\">"
+  [style-name items parent]
+  (str "<style name=\"" style-name "\""
+       (if (nil? parent) "" (str " parent=\"" parent "\""))
+       ">"
        (->> (render-items items)
             (join "\n"))
        "</style>"))
@@ -33,8 +35,8 @@
 
     ;; Write the body of the file by converting each
     ;; node to its xml representation
-    (doseq [{name :id attrs :attrs} nodes]
-      (.write writer (render-style-node name attrs)))
+    (doseq [{name :id attrs :attrs parent :parent} nodes]
+      (.write writer (render-style-node name attrs parent)))
 
     ;; Write the footer
     (.write writer "\n</resources>")))
@@ -46,10 +48,10 @@
     (.toString writer)))
 
 (defn write-to-file!
-  [dir nodes writer]
+  [dir nodes]
   (let [style-root (path-concat dir "values")
         styles-path (path-concat style-root "styles.xml")
-        _ (.mkdirs style-root)
+        _ (mkdirs! style-root)
         writer (clojure.java.io/writer styles-path)]
     (write-to-writer! nodes writer)))
 

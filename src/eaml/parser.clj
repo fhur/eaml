@@ -28,11 +28,16 @@
    :value value})
 
 (defn normalize-style
-  [id parents? attrs?]
+  ([id parents? attrs?]
   {:id id
    :node :style
-   :parents (or-empty parents?)
+   :parent (or-empty parents?)
    :attrs (or-empty attrs?)})
+  ([id attrs?]
+  {:id id
+   :node :style
+   :parent nil
+   :attrs (or-empty attrs?)}))
 
 
 (defn normalize-attr

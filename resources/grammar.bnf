@@ -16,7 +16,7 @@ simple-res-def     = simple-res-type identifier <':'> simple-res-value <';'>
                    | integer-literal
 
 (* styles *)
-style-def     = <'style'> identifier extends-expr <'{'> attrs <'}'>
+style-def     = <'style'> identifier (<'<'> identifier)? <'{'> attrs <'}'>
 config-def    = config-name (<','> config-name)* <'{'> attrs <'}'>
 
 attrs         = (attr-def | config-def)*
@@ -26,8 +26,6 @@ attr-def      = attr-name <':'> attr-value <';'>
               | dimen-literal
               | native-pointer
               | pointer
-
-extends-expr  = (<'<'> identifier (<','> identifier)*)?
 
 (* tokens *)
 <identifier>    = #"[a-zA-Z]\w+"

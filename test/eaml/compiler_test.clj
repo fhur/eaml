@@ -27,6 +27,7 @@
               </style>
             </resources>"
 
+
   when     ["color red: #f00;
              style Bar {
                foo: red;
@@ -37,10 +38,10 @@
               </style>
             </resources>"
 
+
   when     ["color blue: #f00;
              color color_primary: blue;
              dimen text_large: 20sp;
-
              style Button {
                foo: color_primary;
              }
@@ -51,8 +52,7 @@
               <style name=\"Button\">
                 <item name=\"foo\">#f00</item>
               </style>
-              <style name=\"BigButton\">
+              <style name=\"BigButton\" parent=\"Button\">
                 <item name=\"size\">20sp</item>
-                <item name=\"foo\">#f00</item>
               </style>
             </resources>")
