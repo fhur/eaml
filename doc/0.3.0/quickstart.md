@@ -1,23 +1,3 @@
-# eaml
-
-*WARNING:*
-This project is still very alpha. There might be several syntax changes
-and most features are not ready.
-
-eaml (pronounced e-mel) is the extended android modeling language. It is
-an XML preprocessor that will make your android resource definitions
-simple, readable, understandable and will greatly facilitate supporting
-several different configurations with a minimal code base.
-
-Read the [release notes](./doc/release_notes.md) to see what features
-are implemented in the current release.
-
-## A short introduction
-
-This simple guide will give you a feel of the eaml syntax. For a complete
-understanding of the eaml syntax please see the [documentation](./doc/intro.md)
-section. (TODO: docs not ready)
-
 Language QuickStart
 ===================
 
@@ -52,6 +32,33 @@ syntax to describe how resources behave on different configurations.
 dimen button_paddings {
   default: 4dp;
   land: 8dp;
+}
+```
+
+### Functions (TODO)
+
+Eaml supports several built-int functions which greatly facilitate calculating
+properties based on other properties.
+
+```
+color red:          #f00;
+color red_dark:     darker(10%, red);
+color red_darker:   darker(20%, red);
+color red_light:    lighten(10%, red);
+color red_lighter:  lighten(20%, red);
+```
+
+#### Creating your own functions (TODO)
+
+You can create your own functions as follows:
+
+```
+func bigger(dimen d, percent p) {
+  d*(1 + p);
+}
+
+func smaller(dimen d, percent p) {
+  d*(1 - p);
 }
 ```
 
@@ -108,17 +115,4 @@ style RedButton < Button {
 }
 ```
 
-#### Feature requests
 
-eaml is still in its infancy and we are very interested in understanding
-what problems android devs encounter when writing styles.
-
-Is there a feature that you really need but is not here?
-Please create a new issue explaining the feature + use case and
-it might end up on the next version :)
-
-## License
-
-Copyright © 2015 fhur
-
-Distributed under the Eclipse Public License either version 1.0.
