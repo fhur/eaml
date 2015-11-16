@@ -47,12 +47,54 @@
     (write-to-writer! nodes writer)
     (.toString writer)))
 
-(defn write-to-file!
-  [dir nodes]
-  (let [style-root (path-concat dir "values")
-        styles-path (path-concat style-root "styles.xml")
-        _ (mkdirs! style-root)
-        writer (clojure.java.io/writer styles-path)]
-    (write-to-writer! nodes writer)))
+(defn string-writer
+  "Initializes a new StringWriter"
+  [] (StringWriter. ))
 
+(declare render-xml-node-start
+         render-xml-node-body
+         render-xml-node-end)
 
+(defn render-xml
+  [node writer]
+  (let [writer writer]
+    (loop [node-queue (list node)]
+      (if (empty? node-queue)
+        writer
+        (let [head (first node-queue)
+              tail (rest node-queue)]
+          (render-xml-node-start head writer)
+          (render-xml-node-body head writer)
+          (render-xml-node-end head writer)
+          (recur tail))))))
+
+(defn- render-xml-node-start
+  [[node-type attrs & subnodes] writer]
+  (.write writer "<")
+  (.write writer (name node-type))
+  (.write writer " ")
+  (.write writer (->> (map (fn [[k v]]
+                             (str (name k) "=\"" v \"))
+                           attrs)
+                      (join " ")))
+  (.write writer ">"))
+
+(defn- render-xml-node-body
+  [[node-type attrs & subnodes] writer]
+  (when (seq subnodes)
+    (doseq [node subnodes]
+      (if (coll? node)
+        (render-xml node writer)
+        (.write writer node)))))
+
+(defn- render-xml-node-end
+  [[node-type & _] writer]
+  (.write writer "</")
+  (.write writer (name node-type))
+  (.write writer ">"))
+
+(defn render-xml-string
+  [nodes]
+  (let [writer (string-writer)]
+    (render-xml nodes writer)
+    (.toString writer)))

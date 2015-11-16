@@ -1,34 +1,28 @@
 (ns eaml.xml-test
   (:require [eaml.xml :refer :all]
-            [clojure.string :refer [split-lines join]]
+            [eaml.test-helpers :refer :all]
             [presto.core :refer :all]
             [clojure.test :refer :all]))
 
-(defn cleanup-xml
-  [xml-string]
-  (->> (split-lines xml-string)
-       (map #(.trim %))
-       (join)))
+(expected-when "test render-xml" render-xml-string
 
+  when [[:foo]]
+  xml=? "<foo ></foo>"
 
-(defn matches?
-  [expected actual]
-  (= (cleanup-xml expected)
-     (cleanup-xml actual)))
+  when [[:foo {:name "bar" :age "12"} "a string value"]]
+  xml=? "<foo age=\"12\" name=\"bar\">
+          a string value
+        </foo>"
 
+  when  [[:nested {:foo "bar"}
+          [:first {:name "first"} "first-val"]
+          [:second {:name "second"} "second-val"]
+          [:third {:name "third"} "third-val"]]]
+  xml=? "<nested foo=\"bar\">
+          <first name=\"first\">first-val</first>
+          <second name=\"second\">second-val</second>
+          <third name=\"third\">third-val</third>
+        </nested>")
 
-(expected-when "test render-style-node" render-style-node
-  :when ["Foo" [] nil] matches? "<style name=\"Foo\"></style>"
-
-  :when ["Foo" [] "Bar"] matches? "<style name=\"Foo\" parent=\"Bar\"></style>"
-
-  :when ["Foo" [{:name "foo"
-                 :value "bar"}
-                {:name "android:textSize"
-                 :value "12sp"}] nil] matches?
-        "<style name=\"Foo\">
-          <item name=\"foo\">bar</item>
-          <item name=\"android:textSize\">12sp</item>
-        </style>")
 
 
