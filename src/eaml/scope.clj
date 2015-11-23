@@ -9,18 +9,38 @@
   Example: [:literal \"#ff0000\"] => an attr-value for a color
            [:]
   "
-  (:require [eaml.error :refer :all]))
+  (:require [eaml.error :refer :all]
+            [eaml.util :refer :all]))
 
+(defn literal?
+  [parsed]
+  (#{:color :dimen :bool :integer :string} parsed))
 
-(defn scopable?
-  "A node is 'scopable' if it is either a color or a dimen"
-  [node]
-  (#{:color :dimen "color" "dimen"} (:node node)))
+(defn pointer?
+  [parsed]
+  (= parsed :pointer))
 
-(defn- get-attr-value
-  [node]
-  (:value node))
+(defn native-res?
+  [parsed]
+  (= parsed :native-pointer))
 
+(defn remove-quotes
+  [string]
+  (.replaceAll string "[\"']" ""))
+
+(defn parse-expr
+  [string]
+  (case-match string
+    #"\A@.*?/.*"          :native-pointer
+    #"\A#[a-fA-F\d]{3}"   :color
+    #"\A#[a-fA-F\d]{6}"   :color
+    #"\A#[a-fA-F\d]{8}"   :color
+    #"\A\d+(sp|px|dp)"    :dimen
+    #"\Atrue|false"       :bool
+    #"\A\d+"              :integer
+    #"\A\".*?\""          :string
+    #"\A'.*?'"            :string
+    #"\A[a-zA-Z]\w*"      :pointer))
 
 (defn create
   "Create the scope"
@@ -28,55 +48,46 @@
   (reduce (fn [scope node]
             (let [id (:id node)]
               (if (contains? scope id)
-                (raise! (str "Scope already contains a mapping for "id": "(scope id)))
-                (if (scopable? node)
-                  (assoc scope id (get-attr-value node))
-                  scope))))
+                (raise! (itp "Scope already contains a mapping for #{id} => #{node}: #{(scope id)}"))
+                (assoc scope id node))))
           {} nodes))
 
-(defn- get-id
-  "Return the identifier of an attr-value"
-  [attr-value]
-  (second attr-value))
+(defn obtain-type
+  [expr scope]
+  (let [parsed (parse-expr expr)]
+    (cond (literal? parsed)
+            parsed
+          (native-res? parsed)
+            (->> (re-find #"@(.*)/" parsed)
+                 (last)
+                 (keyword))
+          (pointer? parsed)
+            (if (contains? scope expr)
+              (:node (get scope expr))
+              (raise! (itp "No mapping found for '#{expr}' in scope")))
+          :else
+            (raise! (itp "Unkown parse result: '#{parsed}'")))))
 
-(defn literal?
-  [attr-value]
-  (#{"literal" :literal} (first attr-value)))
-
-
-(defn get-literal
-  [attr-value]
-  (second attr-value))
-
-
-(defn pointer?
-  [attr-value]
-  (#{"pointer" :pointer} (first attr-value)))
-
-
-(defn get-pointer
-  [scope attr-value]
-  (let [[_ id] attr-value
-        resolved (get scope id)]
-    (if (literal? resolved)
-      (get-literal resolved)
-      (get-pointer scope resolved))))
-
-
-(defn has?
-  "Returns true if the scope can resolve the given attr-value"
-  [scope attr-value]
-  (if (literal? attr-value) ;; literals can always be resolved
-    true
-    (contains? scope (get-id attr-value)))) ;; check if the id is mapped to the scope
-
-
-(defn obtain
-  "Obtain the current mapping for a given attr-value"
-  [scope attr-value]
-  (cond (literal? attr-value)
-          (get-literal attr-value)
-        (pointer? attr-value)
-          (get-pointer scope attr-value)))
-
+(defn resolve-expr
+  "Obtains the value for the given expr in the scope.
+  If the resolved type is different from the expected type
+  then return nil.
+  If the given expr is not present in the scope, throw an exception.
+  You may use :any as type to match any type"
+  [type expr scope]
+  (let [parsed (parse-expr expr)]
+    (cond (or (literal? parsed) (native-res? parsed))
+            (if (= :string parsed)
+              (remove-quotes expr)
+              expr)
+          (pointer? parsed)
+            (let [resolved-type (obtain-type expr scope)]
+              (if (or (= type :any) (= type resolved-type))
+                (case resolved-type
+                  :dimen          (itp "@dimen/#{expr}")
+                  :color          (itp "@color/#{expr}")
+                  :bool           (itp "@bool/#{expr}")
+                  :integer        (itp "@integer/#{expr}")
+                  :string         (itp "@string/#{expr}"))
+                (raise! "Type mismatch: expected #{type} but got #{resolved-type}"))))))
 

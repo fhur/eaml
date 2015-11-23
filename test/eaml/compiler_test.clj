@@ -39,7 +39,7 @@
           (bool "a_boolean" "@bool/is_true"))})
 
 
-#_(expected-when "Transpiling simple resources that support multiple configs" transpile
+(expected-when "Transpiling simple resources that support multiple configs" transpile
   when  [fix-simple-res-with-configs]
   = {:default (resources
                    (dimen "padding" "12dp")
@@ -48,7 +48,7 @@
                    (color "button_color" "@color/main_color"))
          :v21     (resources
                    (dimen "padding" "24dp")
-                   (dimen "supports_ripples" "yes")
+                   (string "supports_ripples" "yes")
                    (color "button_color" "@drawable/btn_ripple"))
          :land    (resources
-                   (dimen "padding" "30"))})
+                   (dimen "padding" "30dp"))})

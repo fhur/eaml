@@ -60,7 +60,8 @@
                (rest maps))))))
 
 (defn cons*
-  "equivalent to calling cons over the values in reverse order"
+  "equivalent to calling cons over the values in reverse order.
+  Example: (cons* [4 5 6] 1 2 3) == '(1 2 3 4 5 6)"
   [coll & values]
   (if (empty? values)
     coll
@@ -87,6 +88,9 @@
               (cons `str (conj result string))))))
 
 (defn case-match
+  "Matches string agains the given regex, one by one until a match
+  is found. Returns the matched form arg. Returns nil if there are no matches.
+  form-pairs => [regex arg]"
   [string & form-pairs]
   (if (empty? form-pairs)
     nil

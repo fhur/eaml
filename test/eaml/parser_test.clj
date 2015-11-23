@@ -49,7 +49,7 @@
      = {:id "a_string"
         :node :string
         :vals [{:config :default
-                :value "foobar"}]})
+                :value "'foobar'"}]})
 
 (expected-when "parsing an integer" parse-first
   when ["integer foo: 123;"]
@@ -114,7 +114,7 @@
         :attrs [{:name "android:textColor" :value "#123" :config :default}
                 {:name "android:background" :value "@drawable/foo_drawable" :config :default}
                 {:name "android:textSize" :value "small_text" :config :default}
-                {:name "android:text" :value "some text" :config :default}]})
+                {:name "android:text" :value "\"some text\"" :config :default}]})
 
 
 (expected-when "parsing several nodes" parse-str
