@@ -1,58 +1,54 @@
 (ns eaml.compiler-test
   (:require [eaml.compiler :refer :all]
-            [eaml.parser :refer [parse-str]]
+            [eaml.test-helpers :refer :all]
+            [eaml.fixtures.simple-res :refer :all]
             [presto.core :refer :all]
-            [clojure.test :refer :all]
-            [clojure.string :refer [join split-lines]]))
+            [clojure.test :refer :all]))
 
-(defn cleanup-xml
-  [xml-string]
-  (->> (split-lines xml-string)
-       (map #(.trim %))
-       (join)))
+(def transpile transpile-str)
 
 
-(defn matches?
-  [expected actual]
-  (= (cleanup-xml expected)
-     (cleanup-xml actual)))
+(expected-when "Transpiling simple resources" transpile
+  when  [fix-simple-colors]
+     =  {:default
+         (resources
+          (color "red" "#f00")
+          (color "green" "#0f0")
+          (color "blue" "#00f")
+          (color "main_color" "@color/red"))}
 
-(expected-when "test transpile" transpile-str
-  when     ["style Foo {
-              foo: 12dp;
-             }"]
-  matches? "<resources>
-              <style name=\"Foo\">
-                <item name=\"foo\">12dp</item>
-              </style>
-            </resources>"
+  when  [fix-simple-dimen]
+  = {:default
+         (resources
+          (dimen "small_margins" "8dp")
+          (dimen "medium_margins" "12dp")
+          (dimen "large_margins" "24dp")
+          (dimen "default_margins" "@dimen/medium_margins"))}
+
+  when  [fix-simple-strings]
+  = {:default
+         (resources
+          (string "hello_world" "Hello World!")
+          (string "name" "Pizza 123"))}
+
+  when  [fix-simple-bools]
+  = {:default
+         (resources
+          (bool "is_true" "true")
+          (bool "aint_true" "false")
+          (bool "a_boolean" "@bool/is_true"))})
 
 
-  when     ["color red: #f00;
-             style Bar {
-               foo: red;
-            }"]
-  matches? "<resources>
-              <style name=\"Bar\">
-                <item name=\"foo\">#f00</item>
-              </style>
-            </resources>"
-
-
-  when     ["color blue: #f00;
-             color color_primary: blue;
-             dimen text_large: 20sp;
-             style Button {
-               foo: color_primary;
-             }
-             style BigButton < Button {
-               size: text_large;
-             }"]
-  matches? "<resources>
-              <style name=\"Button\">
-                <item name=\"foo\">#f00</item>
-              </style>
-              <style name=\"BigButton\" parent=\"Button\">
-                <item name=\"size\">20sp</item>
-              </style>
-            </resources>")
+#_(expected-when "Transpiling simple resources that support multiple configs" transpile
+  when  [fix-simple-res-with-configs]
+  = {:default (resources
+                   (dimen "padding" "12dp")
+                   (string "supports_ripples" "nope")
+                   (color "main_color" "#f00")
+                   (color "button_color" "@color/main_color"))
+         :v21     (resources
+                   (dimen "padding" "24dp")
+                   (dimen "supports_ripples" "yes")
+                   (color "button_color" "@drawable/btn_ripple"))
+         :land    (resources
+                   (dimen "padding" "30"))})
