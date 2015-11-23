@@ -102,6 +102,3 @@
        (map read-file)
        (map parse-str)
        (flat-coll)))
-
-(parse-str "
-  color blue: #f11; color red { v21: red; }")

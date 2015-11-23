@@ -1,6 +1,8 @@
 (ns eaml.xml
   (:require [clojure.string :refer [join]]
+            [eaml.util :refer :all]
             [eaml.error :refer :all]
+            [clojure.java.io :refer [writer]]
             [eaml.file :refer [path-concat mkdirs!]])
   (:import [java.io StringWriter]))
 
@@ -11,6 +13,13 @@
 (defn string-writer
   "Initializes a new StringWriter"
   [] (StringWriter. ))
+
+(defn config-writer
+  [root config]
+  (let [config-name (name config)
+        file-path (itp "#{root}/#{config-name}/values.xml")]
+    (mkdirs! (itp "#{root}/#{config-name}"))
+    (writer file-path)))
 
 (defn render-xml
   "Writes a tree of nodes to the given writer.

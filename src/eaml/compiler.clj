@@ -37,3 +37,11 @@
          (group-maps)
          (insert-resources-top-level))))
 
+(defn transpile
+  [ast]
+  (let [scope (scope/create ast)
+        transpile-scoped #(transpile-node scope %)]
+    (->> (map transpile-scoped ast)
+         (group-maps)
+         (insert-resources-top-level))))
+

@@ -51,7 +51,7 @@
       (.mkdirs file))))
 
 (defn path-concat
-  "Concatenates to file paths, the first one being a parent
+  "Concatenates two file paths, the first one being a parent
   of the second one."
   [path1 path2]
   (let [clean-path1 (str (File. path1))

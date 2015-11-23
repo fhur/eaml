@@ -1,15 +1,12 @@
 (ns eaml.core
   (:require [eaml.compiler :as compiler]
+            [eaml.xml :as xml]
             [eaml.parser :refer [parse-dir]]))
 
-(defn transpile
-  "Reads all .eaml files in the root-dir and subdirs and places
-  the transpiled result in out-dir.
-  out-dir should be your Android project's res/ folder."
-  [root-dir out-dir]
-  (let [ast (parse-dir root-dir)
-        writer (compiler/dir-writer out-dir)]
-    (compiler/transpile ast writer)))
-
-
-
+(defn eaml
+  [in-dir out-dir]
+  (let [ast (parse-dir in-dir)
+        config-map (compiler/transpile ast)]
+    (doseq [[config xmlstruct] config-map]
+      (with-open [writer (xml/config-writer out-dir config)]
+        (xml/render-xml xmlstruct writer)))))
