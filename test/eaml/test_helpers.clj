@@ -1,6 +1,7 @@
 (ns eaml.test-helpers
   "Place common helper functions for testing"
-  (:require [clojure.string :refer [split-lines join]]))
+  (:require [clojure.string :refer [split-lines join]]
+            [eaml.util :refer :all]))
 
 (defn cleanup-xml
   [xml-string]
@@ -22,7 +23,7 @@
 
 (defmacro resources
   [& nodes]
-  (vec (cons :resources nodes)))
+  (vec (cons* nodes :resources {})))
 
 (defmacro color
   [name value]
