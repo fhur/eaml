@@ -42,3 +42,56 @@
          (recur (rest coll))))))
   ([func coll]
    (find-first func coll nil)))
+
+(defn group-maps
+  "Takes a collection of maps and groups their k,v pairs by key"
+  [maps]
+  (loop [grouped {}
+         maps maps]
+    (if (empty? maps)
+      grouped
+      (let [m (first maps)]
+        (recur (reduce-kv (fn [reduction k v]
+                           (let [current-val (get reduction k)]
+                             (if current-val
+                               (assoc reduction k (conj current-val v))
+                               (assoc reduction k [v]))))
+                   grouped m)
+               (rest maps))))))
+
+(defn cons*
+  "equivalent to calling cons over the values in reverse order"
+  [coll & values]
+  (if (empty? values)
+    coll
+    (cons (first values)
+          (apply cons* coll (rest values)))))
+
+(defmacro itp
+  "Interpolation macro. Similar to ruby interpolation.
+  Does not provide any escaping mechanism.
+  Syntax: (itp 'Hi #{name}, how are you?')
+  Will expand to (str 'Hi ' name ', how are you?')"
+  [string]
+  (loop [string string
+         result []]
+    (let [[_ match-sym-anywhere] (re-find #"(.*?)#\{.*?\}" string)
+          [regex-match match-symbol] (re-find #"\A#\{(.*?)\}" string)]
+      (cond match-symbol
+              (recur (.substring string (count regex-match))
+                     (conj result (read-string match-symbol)))
+            match-sym-anywhere
+              (recur (.substring string (count match-sym-anywhere))
+                     (conj result match-sym-anywhere))
+            :else
+              (cons `str (conj result string))))))
+
+(defn case-match
+  [string & form-pairs]
+  (if (empty? form-pairs)
+    nil
+    (let [[regex form] (take 2 form-pairs)]
+      (if (re-find regex string)
+        form
+        (apply case-match string (rest (rest form-pairs)))))))
+
