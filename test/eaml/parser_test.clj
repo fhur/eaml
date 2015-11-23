@@ -11,47 +11,66 @@
   when ["color red: #ff0000;"]
      = {:id "red"
         :node :color
-        :value [:literal "#ff0000"]}
+        :vals [{:config :default
+                :value "#ff0000"}]}
 
   when ["color some_other_color: #f12;"]
      = {:id "some_other_color"
         :node :color
-        :value [:literal "#f12"]}
+        :vals [{:config :default
+                :value "#f12"}]}
+
+  when ["color multi_config_color {
+           default: #ff0000;
+           v21: @drawable/btn_red_ripple;
+         }"]
+     = {:id "multi_config_color"
+        :node :color
+        :vals [{:config :default
+                :value "#ff0000"}
+               {:config :v21
+                :value "@drawable/btn_red_ripple"}]}
 
   when ["color some_color: some_other;"]
      = {:id "some_color"
         :node :color
-        :value [:pointer "some_other"]})
+        :vals [{:config :default
+                :value "some_other"}]})
 
 (expected-when "parsing a boolean" parse-first
   when ["bool is_foo: true;"]
      = {:id "is_foo"
         :node :bool
-        :value [:literal "true"]})
+        :vals [{:config :default
+                :value "true"}]})
 
 (expected-when "parsing a string" parse-first
   when ["string a_string: 'foobar';"]
      = {:id "a_string"
         :node :string
-        :value [:literal "foobar"]})
+        :vals [{:config :default
+                :value "foobar"}]})
 
 (expected-when "parsing an integer" parse-first
   when ["integer foo: 123;"]
      = {:id "foo"
         :node :integer
-        :value [:literal "123"]})
+        :vals [{:config :default
+                :value "123"}]})
 
 
 (expected-when "parsing a single dimens" parse-first
   when ["dimen small_margins: 12dp;"]
      = {:id "small_margins"
         :node :dimen
-        :value [:literal "12dp"]}
+        :vals [{:config :default
+                :value "12dp"}]}
 
   when ["dimen large_text: 12sp;"]
      = {:id "large_text"
         :node :dimen
-        :value [:literal "12sp"]})
+        :vals [{:config :default
+                :value "12sp"}]})
 
 
 (expected-when "parsing a single style" parse-first
@@ -80,8 +99,8 @@
      = {:id "FooBar123"
         :node :style
         :parent "Foo"
-        :attrs [{:name "android:textColor" :value [:literal "#ff0000"] :config :default}
-                {:name "android:textSize" :value [:literal "12sp"] :config :default}]}
+        :attrs [{:name "android:textColor" :value "#ff0000" :config :default}
+                {:name "android:textSize" :value "12sp" :config :default}]}
 
   when ["style Foo < Bar {
           android:textColor: #123;
@@ -92,10 +111,10 @@
      = {:id "Foo"
         :node :style
         :parent "Bar"
-        :attrs [{:name "android:textColor" :value [:literal "#123"] :config :default}
-                {:name "android:background" :value [:literal "@drawable/foo_drawable"] :config :default}
-                {:name "android:textSize" :value [:pointer "small_text"] :config :default}
-                {:name "android:text" :value [:literal "some text"] :config :default}]})
+        :attrs [{:name "android:textColor" :value "#123" :config :default}
+                {:name "android:background" :value "@drawable/foo_drawable" :config :default}
+                {:name "android:textSize" :value "small_text" :config :default}
+                {:name "android:text" :value "some text" :config :default}]})
 
 
 (expected-when "parsing several nodes" parse-str
@@ -106,11 +125,13 @@
          }"]
      = [{:id "red"
          :node :color
-         :value [:literal "#f00"]}
+         :vals [{:config :default
+                 :value "#f00"}]}
         {:id "normal_paddings"
          :node :dimen
-         :value [:literal "12dp"]}
+         :vals [{:config :default
+                 :value "12dp"}]}
         {:id "Foo"
          :node :style
          :parent "Bar"
-         :attrs [{:name "foo" :value [:literal "12dp"] :config :default}]}])
+         :attrs [{:name "foo" :value "12dp" :config :default}]}])

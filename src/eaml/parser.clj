@@ -11,21 +11,31 @@
 
 (defn normalize-literal
   [literal-value]
-  [:literal literal-value])
+  literal-value)
 
 (defn normalize-pointer
   [value]
-  [:pointer value])
+  value)
 
 (defn normalize-string
   [value]
-  [:literal (.replaceAll value "['\"]" "")])
+  value)
 
 (defn normalize-simple-res-def
   [res-type id value]
   {:node (keyword res-type)
    :id id
-   :value value})
+   :vals value})
+
+(defn normalize-simple-res-single-config
+  [value]
+  [{:config :default
+    :value value}])
+
+(defn normalize-simple-res-config
+  [config value]
+  {:value value
+   :config config})
 
 (defn normalize-style
   ([id parents? attrs?]
@@ -46,6 +56,11 @@
    :value value
    :config :default})
 
+
+(defn normalize-config-name
+  [config-name]
+  (keyword config-name))
+
 (defn normalize-nodes
   [ast-nodes]
   (insta/transform {:color-literal normalize-literal
@@ -55,7 +70,11 @@
                     :boolean-literal normalize-literal
                     :integer-literal normalize-literal
                     :pointer normalize-pointer
+                    :config-name normalize-config-name
                     :simple-res-def normalize-simple-res-def
+                    :simple-res-configs (fn [& args] args)
+                    :simple-res-config normalize-simple-res-config
+                    :simple-res-single-config normalize-simple-res-single-config
 
                     :extends-expr (fn [& args] args)
                     :style-def normalize-style
@@ -84,4 +103,5 @@
        (map parse-str)
        (flat-coll)))
 
-
+(parse-str "
+  color blue: #f11; color red { v21: red; }")

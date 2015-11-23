@@ -5,15 +5,20 @@
           | style-def
 
 (* simple resources *)
-simple-res-def     = simple-res-type identifier <':'> simple-res-value <';'>
-<simple-res-type>  = 'color' | 'dimen' | 'bool' | 'integer' | 'string'
-<simple-res-value> = string-literal
-                   | pointer
-                   | color-literal
-                   | dimen-literal
-                   | native-pointer
-                   | boolean-literal
-                   | integer-literal
+simple-res-def     = simple-res-type identifier <':'> simple-res-single-config <';'>
+                   | simple-res-type identifier <'{'> simple-res-configs <'}'>
+
+simple-res-single-config = simple-res-value
+simple-res-configs       = ( simple-res-config )*
+simple-res-config        = config-name <':'> simple-res-value <';'>
+<simple-res-type>        = 'color' | 'dimen' | 'bool' | 'integer' | 'string'
+<simple-res-value>       = string-literal
+                         | pointer
+                         | color-literal
+                         | dimen-literal
+                         | native-pointer
+                         | boolean-literal
+                         | integer-literal
 
 (* styles *)
 style-def     = <'style'> identifier (<'<'> identifier)? <'{'> attrs <'}'>
