@@ -22,7 +22,16 @@
           <first name=\"first\">first-val</first>
           <second name=\"second\">second-val</second>
           <third name=\"third\">third-val</third>
-        </nested>")
+        </nested>"
+
+  when  [[:a {:x "y"}
+          [:b {:z "w"}
+           [:c {:foo "bar"}]]]]
+  xml=? "<a x=\"y\">
+          <b z=\"w\">
+            <c foo=\"bar\"></c>
+          </b>
+         </a>")
 
 
 
