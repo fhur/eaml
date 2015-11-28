@@ -3,7 +3,6 @@
             [eaml.util :refer :all]
             [eaml.xml :as xml]
             [eaml.scope :as scope]
-            [eaml.node :as node]
             [eaml.transpile.simple-res :refer :all]
             [eaml.transpile.style :refer :all]
             [eaml.parser :as parser]))

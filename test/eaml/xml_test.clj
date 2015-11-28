@@ -1,5 +1,6 @@
 (ns eaml.xml-test
   (:require [eaml.xml :refer :all]
+            [eaml.file :refer [read-file]]
             [eaml.test-helpers :refer :all]
             [presto.core :refer :all]
             [clojure.test :refer :all]))
@@ -16,11 +17,13 @@
 
   when  [[:nested {:foo "bar"}
           [:first {:name "first"} "first-val"]
-          [:second {:name "second"} "second-val"]
+          [:second {:name "second"} [:foo {:hi "ho"}]]
           [:third {:name "third"} "third-val"]]]
   xml=? "<nested foo=\"bar\">
           <first name=\"first\">first-val</first>
-          <second name=\"second\">second-val</second>
+          <second name=\"second\">
+            <foo hi=\"ho\"></foo>
+          </second>
           <third name=\"third\">third-val</third>
         </nested>"
 
@@ -33,5 +36,9 @@
           </b>
          </a>")
 
-
-
+(deftest test-config-writer
+  (let [text (str (rand-int 100) "text")]
+    (with-open [writer (config-writer "tmp" :foo)]
+      (.write writer text))
+    (is (= (str text "\n")
+           (read-file "tmp/values-foo/values.xml")))))

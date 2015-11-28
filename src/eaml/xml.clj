@@ -17,8 +17,9 @@
 (defn config-writer
   [root config]
   (let [config-name (name config)
-        file-path (itp "#{root}/#{config-name}/values.xml")]
-    (mkdirs! (itp "#{root}/#{config-name}"))
+        dir (itp "#{root}/values-#{config-name}")
+        file-path (itp "#{dir}/values.xml")]
+    (mkdirs! dir)
     (writer file-path)))
 
 (defn render-xml

@@ -66,3 +66,10 @@
   when [[1 2 3 4 5] #(> % 5)] = nil
   when [[1 2 3 4 5] #(> % 3)] = 4
   when [[] (fn [x] true)] = nil) 
+
+(expected-when "singleton? returns true iff coll has only 1 element" singleton?
+  when [nil] = false
+  when [{}]  = false
+  when [[]]  = false
+  when [[1]] = true)
+
