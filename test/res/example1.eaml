@@ -1,0 +1,18 @@
+color red: #f00;
+color green: #0f0;
+color blue : #00f;
+
+dimen activity_margins {
+  default: 8dp;
+  land: 12dp;
+}
+
+dimen button_text_size: 12dp;
+
+style Button {
+  android:textSize: button_text_size;
+  android:background: red;
+  v21 {
+    android:background: @drawable/btn_ripple;
+  }
+}
