@@ -1,4 +1,4 @@
-(defproject eaml "0.2.0"
+(defproject eaml "0.3.0"
   :description "Describe your android styles expressively with eaml
                an Android XML styles pre-processor."
   :url "http://github.com/fhur/eaml"

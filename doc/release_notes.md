@@ -1,3 +1,26 @@
+# eaml 0.3.0 - 1448745045
+
+Main features:
+- Removed multiple inheritance. Implementation proved to be way to complicated.
+  Added support for single inheritance via piggy-backing on the style's native
+  `parent` attribute.
+- Added support for `bool`, `string` and `integer`.
+- Added support for multiple configurations for simple resources:
+```
+dimen margins {
+  default: 8dp;
+  land: 12dp;
+}
+```
+- Added support for multiple configurations for styles:
+```
+style Button < BaseButton {
+  android:background: @drawable/btn_bkg;
+  &:v21, v22 {
+    android:background: @drawable/btn_ripple;
+  }
+}
+```
 
 # eaml 0.2.0 - 1445287611
 
