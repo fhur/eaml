@@ -38,16 +38,13 @@
    :config config})
 
 (defn normalize-style
-  ([id parents? attrs?]
+  ([id parent attrs?]
   {:id id
    :node :style
-   :parent (or-empty parents?)
+   :parent parent
    :attrs (or-empty attrs?)})
   ([id attrs?]
-  {:id id
-   :node :style
-   :parent nil
-   :attrs (or-empty attrs?)}))
+   (normalize-style id nil attrs?)))
 
 
 (defn normalize-attr
@@ -61,6 +58,20 @@
   [config-name]
   (keyword config-name))
 
+(defn normalize-config-block
+  [config-names & attrs]
+  {:config-block (for [config-name config-names
+                       attr attrs]
+                   (assoc attr :config config-name))})
+
+(defn normalize-style-attrs
+  [& attrs]
+  (reduce (fn [result attr]
+            (if (:config-block attr)
+              (into result (:config-block attr))
+              (conj result attr)))
+          [] attrs))
+
 (defn normalize-nodes
   [ast-nodes]
   (insta/transform {:color-literal normalize-literal
@@ -71,14 +82,16 @@
                     :integer-literal normalize-literal
                     :pointer normalize-pointer
                     :config-name normalize-config-name
+                    :config-names (fn [& args] args)
                     :simple-res-def normalize-simple-res-def
                     :simple-res-configs (fn [& args] args)
                     :simple-res-config normalize-simple-res-config
                     :simple-res-single-config normalize-simple-res-single-config
+                    :config-block normalize-config-block
 
                     :extends-expr (fn [& args] args)
                     :style-def normalize-style
-                    :attrs (fn [& args] args)
+                    :attrs normalize-style-attrs
                     :attr-def normalize-attr}
                    ast-nodes))
 

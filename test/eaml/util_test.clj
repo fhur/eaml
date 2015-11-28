@@ -3,19 +3,9 @@
             [presto.core :refer :all]
             [clojure.test :refer :all]))
 
-(defn- gt [arg] #(> % arg))
-
 (defn weak=
   [expected actual]
   (= (set expected) (set actual)))
-
-(expected-when "test find-first" find-first
-  when [(gt 0) [-1 -2 -3 9 12] :foo] = 9
-  when [(gt 10) [1 2 3 4] :foo ] = :foo
-  when [nil? [1 :foo nil :bar] :not-nil] = nil
-  when [(gt 0) [] :foo ] = :foo
-  when [(gt 0) [-1 -2 -3]] = nil)
-
 
 (def test-graph
   {:a [:b :c]
@@ -67,9 +57,12 @@
   when [[] [1 2 3] identity] weak= [1 2 3]
   when [[1 2 3] [] identity] weak= [1 2 3]
   when [[] [] identity] = []
-  when [[1 2 3] [3 4 5] identity] weak= [1 2 3 4 5])
+  when [[1 2 3] [3 4 5] identity] weak= [1 2 3 4 5]
+  when  [[{:a 1 :b 2} {:a 2 :b 3} {:foo :bar}]
+         [{:a 1 :b 3} {:a 2 :b 6} {:a 4 :b 5}] :a]
+  weak= [{:a 1 :b 3} {:a 2 :b 6} {:a 4 :b 5} {:foo :bar}])
 
 (expected-when "find-first finds the first element that matches a predicate" find-first
   when [[1 2 3 4 5] #(> % 5)] = nil
   when [[1 2 3 4 5] #(> % 3)] = 4
-  when [[] (fn [x] true)] = nil)
+  when [[] (fn [x] true)] = nil) 

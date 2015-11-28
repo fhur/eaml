@@ -28,20 +28,22 @@
         (recur (assoc result-map key (cons* value :resources {}))
                (rest remaining-keys))))))
 
-(defn transpile-str
-  [string]
-  (let [ast (parser/parse-str string)
-        scope (scope/create ast)
-        transpile-scoped #(transpile-node scope %)]
-    (->> (map transpile-scoped ast)
-         (group-maps)
-         (insert-resources-top-level))))
-
 (defn transpile
+  "Transpile the given AST into an XmlStruct.
+  Returns a map of configuration => XmlStruct where
+  configuration is a configuration name e.g. 'tablet'"
   [ast]
   (let [scope (scope/create ast)
         transpile-scoped #(transpile-node scope %)]
     (->> (map transpile-scoped ast)
          (group-maps)
          (insert-resources-top-level))))
+
+(defn transpile-str
+  "Equivalent to transpile but takes a eaml program string as input instead
+  of an AST and transpiles it."
+  [string]
+  (let [ast (parser/parse-str string)]
+    (transpile ast)))
+
 

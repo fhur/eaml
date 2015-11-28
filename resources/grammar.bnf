@@ -22,9 +22,10 @@ simple-res-config        = config-name <':'> simple-res-value <';'>
 
 (* styles *)
 style-def     = <'style'> identifier (<'<'> identifier)? <'{'> attrs <'}'>
-config-def    = config-name (<','> config-name)* <'{'> attrs <'}'>
+config-block  = <'&:'> config-names <'{'> attr-def* <'}'>
+config-names  = config-name (<','> config-name)*
 
-attrs         = (attr-def | config-def)*
+attrs         = (attr-def | config-block)*
 attr-def      = attr-name <':'> attr-value <';'>
 <attr-value>  = string-literal
               | color-literal

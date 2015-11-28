@@ -5,10 +5,7 @@
             [presto.core :refer :all]
             [clojure.test :refer :all]))
 
-(def transpile transpile-str)
-
-
-(expected-when "Transpiling simple resources" transpile
+(expected-when "Transpiling simple resources" transpile-str
   when  [fix-simple-colors]
      =  {:default
          (resources
@@ -39,16 +36,44 @@
           (bool "a_boolean" "@bool/is_true"))})
 
 
-(expected-when "Transpiling simple resources that support multiple configs" transpile
+(expected-when "Transpiling simple resources that support multiple configs" transpile-str
   when  [fix-simple-res-with-configs]
-  = {:default (resources
-                   (dimen "padding" "12dp")
-                   (string "supports_ripples" "nope")
-                   (color "main_color" "#f00")
-                   (color "button_color" "@color/main_color"))
+  = {:default   (resources
+                  (dimen "padding" "12dp")
+                  (string "supports_ripples" "nope")
+                  (color "main_color" "#f00")
+                  (color "button_color" "@color/main_color"))
+     :v21       (resources
+                  (dimen "padding" "24dp")
+                  (string "supports_ripples" "yes")
+                  (color "button_color" "@drawable/btn_ripple"))
+     :land      (resources
+                  (dimen "padding" "30dp"))})
+
+(expected-when "Transpiling styles" transpile-str
+  when  ["style Button < BaseButton {
+          android:textSize: 12dp;
+          android:background: @drawable/btn_back;
+          &:v21,v22 {
+            android:background: @drawable/btn_ripple;
+          }
+          &:land {
+            android:textSize: 10dp;
+          }
+         }"]
+     =  {:default (resources
+                    (style {:name "Button" :parent "BaseButton"}
+                           (item "android:textSize" "12dp")
+                           (item "android:background" "@drawable/btn_back")))
          :v21     (resources
-                   (dimen "padding" "24dp")
-                   (string "supports_ripples" "yes")
-                   (color "button_color" "@drawable/btn_ripple"))
+                    (style {:name "Button" :parent "BaseButton"}
+                           (item "android:background" "@drawable/btn_ripple")
+                           (item "android:textSize" "12dp")))
+         :v22     (resources
+                    (style {:name "Button" :parent "BaseButton"}
+                           (item "android:background" "@drawable/btn_ripple")
+                           (item "android:textSize" "12dp")))
          :land    (resources
-                   (dimen "padding" "30dp"))})
+                    (style {:name "Button" :parent "BaseButton"}
+                           (item "android:textSize" "10dp")
+                           (item "android:background" "@drawable/btn_back")))})

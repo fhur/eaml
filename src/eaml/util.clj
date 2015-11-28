@@ -24,20 +24,6 @@
                  (conj visited node)
                  (conj result node)))))))
 
-
-(defn find-first
-  "Iterates over coll and returns the first item such that (func item)
-  is truthy. If no item is found then default is returned (defaults to nil)."
-  ([func coll default]
-   (loop [coll coll]
-     (if (empty? coll)
-       default
-       (if (func (first coll))
-         (first coll)
-         (recur (rest coll))))))
-  ([func coll]
-   (find-first func coll nil)))
-
 (defn group-maps
   "Takes a collection of maps and groups their k,v pairs by key"
   [maps]

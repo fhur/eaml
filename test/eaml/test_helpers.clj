@@ -41,3 +41,12 @@
   [name value]
   (simpleres :bool name value))
 
+(defmacro item
+  [name value]
+  (simpleres :item name value))
+
+(defmacro style
+  [attrs & items]
+  (vec (cons* items :style attrs)))
+
+

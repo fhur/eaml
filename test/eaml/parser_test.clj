@@ -122,6 +122,7 @@
          dimen normal_paddings: 12dp;
          style Foo < Bar {
            foo: 12dp;
+           &:land { foo: 12dp; }
          }"]
      = [{:id "red"
          :node :color
@@ -134,4 +135,6 @@
         {:id "Foo"
          :node :style
          :parent "Bar"
-         :attrs [{:name "foo" :value "12dp" :config :default}]}])
+         :attrs [{:name "foo" :value "12dp" :config :default}
+                 {:name "foo" :value "12dp" :config :land}]}])
+
