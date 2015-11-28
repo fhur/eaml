@@ -94,3 +94,28 @@
         form
         (apply case-match string (rest (rest form-pairs)))))))
 
+(defn merge-lists
+  "This function returns a list 'L' of elements s.t. for all a in l1 and for all
+  b in l2:
+   - f(a) == f(b) then L contains b and does not contain a.
+   - f(a) != f(b) then L contains b and a"
+  [l1 l2 f]
+  (let [mapped (set (map f l2))]
+    (loop [result l2
+           items l1]
+      (if (empty? items)
+        result
+        (let [item (first items)
+              tail (rest items)]
+          (if (contains? mapped (f item))
+            (recur result tail)
+            (recur (conj result item) tail)))))))
+
+(defn singleton?
+  [coll]
+  (= (count coll) 1))
+
+(defn find-first
+  "Return the first x in coll s.t. pred(x) = true"
+  [coll pred]
+  (first (filter pred coll)))

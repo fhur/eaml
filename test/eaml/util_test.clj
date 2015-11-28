@@ -5,6 +5,10 @@
 
 (defn- gt [arg] #(> % arg))
 
+(defn weak=
+  [expected actual]
+  (= (set expected) (set actual)))
+
 (expected-when "test find-first" find-first
   when [(gt 0) [-1 -2 -3 9 12] :foo] = 9
   when [(gt 10) [1 2 3 4] :foo ] = :foo
@@ -55,6 +59,17 @@
 
 (expected-when "case-match test" case-match
   when ["foobar" #"\Afoo" :foo] = :foo
-  when ["foobar" #"\Abar" :bar] = nil 
+  when ["foobar" #"\Abar" :bar] = nil
   when ["foobar" #"\Afoo" :foo
                  #"\Afoobar" :foobar] = :foo)
+
+(expected-when "merge-lists test" merge-lists
+  when [[] [1 2 3] identity] weak= [1 2 3]
+  when [[1 2 3] [] identity] weak= [1 2 3]
+  when [[] [] identity] = []
+  when [[1 2 3] [3 4 5] identity] weak= [1 2 3 4 5])
+
+(expected-when "find-first finds the first element that matches a predicate" find-first
+  when [[1 2 3 4 5] #(> % 5)] = nil
+  when [[1 2 3 4 5] #(> % 3)] = 4
+  when [[] (fn [x] true)] = nil)
