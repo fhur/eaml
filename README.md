@@ -1,8 +1,6 @@
 # eaml
 
-*WARNING:*
-This project is still very alpha. There might be several syntax changes
-and most features are not ready.
+[![Circle CI](https://circleci.com/gh/fhur/eaml/tree/master.svg?style=svg)](https://circleci.com/gh/fhur/eaml/tree/master)
 
 eaml (pronounced e-mel) is the extended android modeling language. It is
 an XML preprocessor that will make your android resource definitions
