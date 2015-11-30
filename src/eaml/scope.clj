@@ -24,7 +24,7 @@
   [parsed]
   (= parsed :native-pointer))
 
-(defn remove-quotes
+(defn- remove-quotes
   [string]
   (.replaceAll string "[\"']" ""))
 
@@ -58,7 +58,7 @@
     (cond (literal? parsed)
             parsed
           (native-res? parsed)
-            (->> (re-find #"@(.*)/" parsed)
+            (->> (re-find #"@(.*?)/" expr)
                  (last)
                  (keyword))
           (pointer? parsed)

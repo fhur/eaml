@@ -9,6 +9,6 @@
 (defn raise!
   "Throws a RuntimeException with the given message as argument"
   [& messages]
-  (throw (new RuntimeException (join "" (map ppr messages)))))
+  (throw (new IllegalStateException (join "" (map ppr messages)))))
 
 
