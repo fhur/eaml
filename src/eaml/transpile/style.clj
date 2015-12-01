@@ -38,15 +38,9 @@
       ;; iterate over all configs and construct
       ;; a map that assocs a config key to the XmlStruct
       ;; for the attrs that should be rendered in that config
-      (loop [config-map {}
-             configs configs]
-        (if (empty? configs)
-          config-map
-          (let [config (first configs)
-                current-attrs (get by-config config)]
-            (recur (assoc config-map config
-                          (mk-style-res id parent current-attrs))
-                   (rest configs))))))))
-
+      (reduce (fn [config-map config]
+                (assoc config-map config
+                       (mk-style-res id parent (get by-config config))))
+              {} configs))))
 
 
