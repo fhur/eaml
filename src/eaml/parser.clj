@@ -46,6 +46,12 @@
   ([id attrs?]
    (normalize-style id nil attrs?)))
 
+(defn normalize-mixin
+  [id attrs?]
+  {:id id
+   :node :mixin
+   :attrs (or-empty attrs?)})
+
 
 (defn normalize-attr
   [id value]
@@ -90,6 +96,7 @@
                     :config-block normalize-config-block
 
                     :extends-expr (fn [& args] args)
+                    :mixin-def normalize-mixin
                     :style-def normalize-style
                     :attrs normalize-style-attrs
                     :attr-def normalize-attr}

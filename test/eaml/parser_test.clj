@@ -86,12 +86,6 @@
         :parent "Foo"
         :attrs []}
 
-  when ["style FooBar < Boo {}"]
-     = {:id "FooBar"
-        :node :style
-        :parent "Boo"
-        :attrs []}
-
   when ["style FooBar123 < Foo {
            android:textColor: #ff0000;
            android:textSize: 12sp;
@@ -116,6 +110,31 @@
                 {:name "android:textSize" :value "small_text" :config :default}
                 {:name "android:text" :value "\"some text\"" :config :default}]})
 
+(expected-when "Parsing a single mixin" parse-first
+  when ["mixin Foo {}"]
+     = {:id "Foo"
+        :node :mixin
+        :attrs []}
+
+  when ["mixin FooBarBaz {
+          android:textSize: 12sp;
+          android:textColor: #123456;
+          android:numFoo: 4;
+          android:text: @string/a_string;
+          &:foo-bar {
+            android:textSize: 14sp;
+            android:extraAttr: 'extra';
+          }
+        }"]
+    = {:id "FooBarBaz"
+       :node :mixin
+       :attrs [{:name "android:textSize" :value "12sp" :config :default}
+               {:name "android:textColor" :value "#123456" :config :default}
+               {:name "android:numFoo" :value "4" :config :default}
+               {:name "android:text" :value "@string/a_string" :config :default}
+               {:name "android:textSize" :value "14sp" :config :foo-bar}
+               {:name "android:extraAttr" :value "'extra'" :config :foo-bar}]})
+
 
 (expected-when "parsing several nodes" parse-str
   when ["color red: #f00;
@@ -137,4 +156,3 @@
          :parent "Bar"
          :attrs [{:name "foo" :value "12dp" :config :default}
                  {:name "foo" :value "12dp" :config :land}]}])
-

@@ -1,8 +1,9 @@
-<S> = res-def+ (* A program is composed of 1 or more resource definitions *)
+<S> = res-def* (* A program is composed of 1 or more resource definitions *)
 
 (* there are currently only 3 types of resources *)
 <res-def> = simple-res-def
           | style-def
+          | mixin-def
 
 (* simple resources *)
 simple-res-def     = simple-res-type identifier <':'> simple-res-single-config <';'>
@@ -30,8 +31,12 @@ attr-def      = attr-name <':'> attr-value <';'>
 <attr-value>  = string-literal
               | color-literal
               | dimen-literal
+              | integer-literal
               | native-pointer
               | pointer
+
+(* mixins *)
+mixin-def     = <'mixin'> identifier <'{'> attrs <'}'>
 
 (* tokens *)
 <identifier>    = #"[a-zA-Z]\w+"

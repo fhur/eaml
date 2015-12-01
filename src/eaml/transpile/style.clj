@@ -29,7 +29,6 @@
           configs (keys by-config)
           ;; get the 'default' config attrs
           default-attrs (:default by-config)
-          _ (println default-attrs)
           ;; merge the default config attrs into other configs.
           ;; Why? default config attrs should be present by default.
           by-config (reduce-kv (fn [by-config config attrs]
