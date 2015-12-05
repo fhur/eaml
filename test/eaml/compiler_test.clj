@@ -51,29 +51,40 @@
                   (dimen "padding" "30dp"))})
 
 (expected-when "Transpiling styles" transpile-str
+  when  ["color foo: #fff;
+          style Foo {
+            foo: foo;
+          }"]
+     =  {:default (resources
+                    (color "foo" "#fff")
+                    (style {:name "Foo"}
+                           (item "foo" "@color/foo")))}
+
   when  ["style Button < BaseButton {
-          android:textSize: 12dp;
-          android:background: @drawable/btn_back;
-          &:v21,v22 {
-            android:background: @drawable/btn_ripple;
-          }
-          &:land {
-            android:textSize: 10dp;
-          }
-         }"]
+            android:textSize: 12dp;
+            android:background: @drawable/btn_back;
+            &:v21,v22 {
+              android:background: @drawable/btn_ripple;
+            }
+            &:land {
+              android:textSize: 10dp;
+            }
+          }"]
      =  {:default (resources
                     (style {:name "Button" :parent "BaseButton"}
                            (item "android:textSize" "12dp")
                            (item "android:background" "@drawable/btn_back")))
          :v21     (resources
                     (style {:name "Button" :parent "BaseButton"}
-                           (item "android:background" "@drawable/btn_ripple")
-                           (item "android:textSize" "12dp")))
+                           (item "android:textSize" "12dp")
+                           (item "android:background" "@drawable/btn_ripple")))
          :v22     (resources
                     (style {:name "Button" :parent "BaseButton"}
-                           (item "android:background" "@drawable/btn_ripple")
-                           (item "android:textSize" "12dp")))
+                           (item "android:textSize" "12dp")
+                           (item "android:background" "@drawable/btn_ripple")))
          :land    (resources
                     (style {:name "Button" :parent "BaseButton"}
-                           (item "android:textSize" "10dp")
-                           (item "android:background" "@drawable/btn_back")))})
+                           (item "android:background" "@drawable/btn_back")
+                           (item "android:textSize" "10dp")))})
+
+

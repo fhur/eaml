@@ -1,4 +1,5 @@
-(ns eaml.util)
+(ns eaml.util
+  (:require [clojure.set :refer [union intersection]]))
 
 (defn flat-coll
   "Given a coll of collections, flattens it by one level.
@@ -6,23 +7,6 @@
   [colls]
   (apply concat colls))
 
-(defn bfs
-  "Perform a BFS in the given graph.
-  (next-nodes-fn node graph) => takes a node as input and returns all nodes connected to that
-  node in the graph."
-  [next-nodes-fn initial-node graph]
-  (loop [queue [initial-node]
-         visited #{}
-         result []]
-    (if (empty? queue)
-      result
-      (let [node (first queue)
-            queue-tail (subvec queue 1)]
-        (if (visited node)
-          (recur queue-tail visited result)
-          (recur (into queue-tail (next-nodes-fn node graph))
-                 (conj visited node)
-                 (conj result node)))))))
 
 (defn group-maps
   "Takes a collection of maps and groups their k,v pairs by key"
@@ -80,22 +64,6 @@
         form
         (apply case-match string (rest (rest form-pairs)))))))
 
-(defn merge-lists
-  "This function returns a list 'L' of elements s.t. for all a in l1 and for all
-  b in l2:
-   - f(a) == f(b) then L contains b and does not contain a.
-   - f(a) != f(b) then L contains b and a"
-  [l1 l2 f]
-  (let [mapped (set (map f l2))]
-    (loop [result l2
-           items l1]
-      (if (empty? items)
-        result
-        (let [item (first items)
-              tail (rest items)]
-          (if (contains? mapped (f item))
-            (recur result tail)
-            (recur (conj result item) tail)))))))
 
 (defn singleton?
   [coll]
@@ -105,3 +73,34 @@
   "Return the first x in coll s.t. pred(x) = true"
   [coll pred]
   (first (filter pred coll)))
+
+
+(defn merge-lists
+  "Preconditions:
+  - f is a 1-1 function
+  - Every element on both l1 and l2 is unique
+
+  Merges the two lists into one. If for some a in l1 and b in l2
+  (= (f a) (f b)) then only b is added."
+  [l1 l2 f]
+  (let [mapped-set1 (set (map f l1))
+        mapped-set2 (set (map f l2))
+        mapped-intersection (intersection mapped-set1 mapped-set2)
+        l1-filtered (filter (fn [x]
+                              (if (contains? mapped-intersection (f x))
+                                  false true))
+                            l1)]
+    (loop [l2 l2
+           clashes []
+           result []]
+      (if (empty? l2)
+        (concat l1-filtered result clashes)
+        (let [x (first l2)
+              tail (rest l2)
+              fx (f x)]
+          (if (contains? mapped-intersection fx)
+            (recur tail (conj clashes x) result)
+            (recur tail clashes (conj result x))))))))
+
+
+

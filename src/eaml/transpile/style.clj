@@ -1,17 +1,18 @@
 (ns eaml.transpile.style
-  (:require [eaml.util :refer :all]))
+  (:require [eaml.util :refer :all]
+            [eaml.scope :refer [resolve-expr]]))
 
 (defn- mk-item
-  [{name :name value :value}]
-  [:item {:name name} value])
+  [scope {name :name value :value}]
+  [:item {:name name} (resolve-expr :any value scope)])
 
 (defn- mk-style-res
-  [id parent? attrs]
+  [scope id parent? attrs]
   (let [style-attrs {:name id}
         style-attrs (if parent?
                       (assoc style-attrs :parent parent?)
                       style-attrs)
-        items (map mk-item attrs)]
+        items (map #(mk-item scope %) attrs)]
     (cons* items :style style-attrs)))
 
 (defn style?
@@ -20,7 +21,7 @@
 
 (defn transpile-style
   "Return a map of config => style XmlStruct"
-  [{id :id parent :parent attrs :attrs}]
+  [scope {id :id parent :parent attrs :attrs}]
   (if (empty? attrs)
     ;; if there are no attrs, return an empty style
     (mk-style-res id parent [])
@@ -40,7 +41,7 @@
       ;; for the attrs that should be rendered in that config
       (reduce (fn [config-map config]
                 (assoc config-map config
-                       (mk-style-res id parent (get by-config config))))
+                       (mk-style-res scope id parent (get by-config config))))
               {} configs))))
 
 

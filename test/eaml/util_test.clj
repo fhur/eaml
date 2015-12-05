@@ -3,27 +3,6 @@
             [presto.core :refer :all]
             [clojure.test :refer :all]))
 
-(defn weak=
-  [expected actual]
-  (= (set expected) (set actual)))
-
-(def test-graph
-  {:a [:b :c]
-   :b []
-   :c [:d :e]
-   :d [:a :b :c]
-   :e [:f]
-   :f [:g]})
-
-(expected-when "bfs performs a BFS over a graph"
-               (fn [initial-node]
-                 (bfs (fn [node graph] (get graph node))
-                      initial-node test-graph))
-  when [:b] = [:b]
-  when [:e] = [:e :f :g]
-  when [:a] = [:a :b :c :d :e :f :g])
-
-
 (expected-when "flat-coll flattens a coll of colls" flat-coll
   when [[]] = []
   when [[[1] [2]]] = [1 2]
@@ -54,18 +33,20 @@
                  #"\Afoobar" :foobar] = :foo)
 
 (expected-when "merge-lists test" merge-lists
-  when [[] [1 2 3] identity] weak= [1 2 3]
-  when [[1 2 3] [] identity] weak= [1 2 3]
+  when [[] [1 2 3] identity] = [1 2 3]
+  when [[1 2 3] [] identity] = [1 2 3]
   when [[] [] identity] = []
-  when [[1 2 3] [3 4 5] identity] weak= [1 2 3 4 5]
+  when [[1 2 3] [4 5 6] identity] = [1 2 3 4 5 6]
+  when [[1 2 3] [3 4 5] identity] = [1 2 4 5 3]
   when  [[{:a 1 :b 2} {:a 2 :b 3} {:foo :bar}]
-         [{:a 1 :b 3} {:a 2 :b 6} {:a 4 :b 5}] :a]
-  weak= [{:a 1 :b 3} {:a 2 :b 6} {:a 4 :b 5} {:foo :bar}])
+         [{:a 1 :b 3} {:a 2 :b 6} {:a 4 :b 5}]
+         :a]
+  = [{:foo :bar} {:a 4 :b 5} {:a 1 :b 3} {:a 2 :b 6}])
 
 (expected-when "find-first finds the first element that matches a predicate" find-first
   when [[1 2 3 4 5] #(> % 5)] = nil
   when [[1 2 3 4 5] #(> % 3)] = 4
-  when [[] (fn [x] true)] = nil) 
+  when [[] (fn [x] true)] = nil)
 
 (expected-when "singleton? returns true iff coll has only 1 element" singleton?
   when [nil] = false

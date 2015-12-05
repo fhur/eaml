@@ -11,7 +11,7 @@
   [scope node]
   (let [type (:node node)]
     (cond (style? type)
-            (transpile-style node)
+            (transpile-style scope node)
           (simple-res? type)
             (transpile-simple-res scope node)
           :else (raise! "Unknown node type: " node))))

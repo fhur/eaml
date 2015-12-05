@@ -91,3 +91,7 @@
                   :string         (itp "@string/#{expr}"))
                 (raise! "Type mismatch: expected #{type} but got #{resolved-type}"))))))
 
+(defn include?
+  "True if the given id exists for the current scope."
+  [scope id]
+  (contains? scope id))

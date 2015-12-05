@@ -50,6 +50,15 @@
   when ["foo"] = "@integer/foo"
   when ["my_name"] = "@string/my_name")
 
+(expected-when "include? returns true iff the scope contains
+                the given id" #(include? scope %)
+  when ["red"] = true
+  when ["main_color"] = true
+  when ["RedText"] = true
+  when ["Foo"] = true
+  when ["other_name"] = true
+  when ["akaljsdhf"] = false)
+
 (deftest obtain-type-throws-when-not-found
   (is (thrown? IllegalStateException (obtain-type "asdf" scope)))
   (is (thrown? IllegalStateException (obtain-type "a%1234" scope)))
