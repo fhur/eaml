@@ -99,16 +99,20 @@
   when ["style Foo < Bar {
           android:textColor: #123;
           android:background: @drawable/foo_drawable;
+          fooBar();
           android:textSize: small_text;
           android:text: \"some text\";
+          qux();
         }"]
      = {:id "Foo"
         :node :style
         :parent "Bar"
         :attrs [{:name "android:textColor" :value "#123" :config :default}
                 {:name "android:background" :value "@drawable/foo_drawable" :config :default}
+                {:mixin "fooBar" :args [] :config :default}
                 {:name "android:textSize" :value "small_text" :config :default}
-                {:name "android:text" :value "\"some text\"" :config :default}]})
+                {:name "android:text" :value "\"some text\"" :config :default}
+                {:mixin "qux" :args [] :config :default}]})
 
 (expected-when "Parsing a single mixin" parse-first
   when ["mixin Foo {}"]

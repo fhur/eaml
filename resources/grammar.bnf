@@ -26,7 +26,7 @@ style-def     = <'style'> identifier (<'<'> identifier)? <'{'> attrs <'}'>
 config-block  = <'&:'> config-names <'{'> attr-def* <'}'>
 config-names  = config-name (<','> config-name)*
 
-attrs         = (attr-def | config-block)*
+attrs         = (attr-def | config-block | mixin-call)*
 attr-def      = attr-name <':'> attr-value <';'>
 <attr-value>  = string-literal
               | color-literal
@@ -36,7 +36,9 @@ attr-def      = attr-name <':'> attr-value <';'>
               | pointer
 
 (* mixins *)
-mixin-def     = <'mixin'> identifier <'{'> attrs <'}'>
+mixin-def     = <'mixin'> identifier <'{'> mixin-attrs <'}'>
+mixin-attrs   = (attr-def | config-block)*
+mixin-call    = identifier <'('> <')'> <';'>
 
 (* tokens *)
 <identifier>    = #"[a-zA-Z]\w+"

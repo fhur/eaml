@@ -72,11 +72,24 @@
 
 (defn normalize-style-attrs
   [& attrs]
+  ;; TODO: rewrite this
   (reduce (fn [result attr]
             (if (:config-block attr)
               (into result (:config-block attr))
               (conj result attr)))
           [] attrs))
+
+(defn normalize-mixin-attrs
+  [& attrs]
+  ;; TODO: rewrite this
+  (apply normalize-style-attrs attrs))
+
+(defn normalize-mixin-call
+  [mixin-id & args?]
+  {:mixin mixin-id
+   :config :default
+   :args (or-empty args?)})
+
 
 (defn normalize-nodes
   [ast-nodes]
@@ -94,11 +107,12 @@
                     :simple-res-config normalize-simple-res-config
                     :simple-res-single-config normalize-simple-res-single-config
                     :config-block normalize-config-block
-
+                    :mixin-call normalize-mixin-call
                     :extends-expr (fn [& args] args)
                     :mixin-def normalize-mixin
                     :style-def normalize-style
                     :attrs normalize-style-attrs
+                    :mixin-attrs normalize-mixin-attrs
                     :attr-def normalize-attr}
                    ast-nodes))
 

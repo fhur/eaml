@@ -11,6 +11,9 @@
                        string name: 'a name';
                        string my_name: name;
                        string other_name: my_name;
+                       mixin RedText {
+                         android:textColor: red;
+                       }
                        style Foo < Bar {
                          android:textColor: main_color;
                          android:foo: foo;

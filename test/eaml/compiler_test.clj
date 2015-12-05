@@ -5,6 +5,7 @@
             [presto.core :refer :all]
             [clojure.test :refer :all]))
 
+
 (expected-when "Transpiling simple resources" transpile-str
   when  [fix-simple-colors]
      =  {:default
@@ -52,13 +53,20 @@
 
 (expected-when "Transpiling styles" transpile-str
   when  ["color foo: #fff;
+          mixin redColored {
+            color: #f00;
+            bar: 12dp;
+          }
           style Foo {
             foo: foo;
+            redColored();
           }"]
      =  {:default (resources
                     (color "foo" "#fff")
                     (style {:name "Foo"}
-                           (item "foo" "@color/foo")))}
+                           (item "foo" "@color/foo")
+                           (item "color" "#f00")
+                           (item "bar" "12dp")))}
 
   when  ["style Button < BaseButton {
             android:textSize: 12dp;

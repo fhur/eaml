@@ -27,13 +27,18 @@
         (recur (assoc result-map key (cons* value :resources {}))
                (rest remaining-keys))))))
 
+(defn- skip-node?
+  [{node-type :node}]
+  (= node-type :mixin))
+
 (defn transpile
   "Transpile the given AST into an XmlStruct.
   Returns a map of configuration => XmlStruct where
   configuration is a configuration name e.g. 'tablet'"
   [ast]
   (let [scope (scope/create ast)
-        transpile-scoped #(transpile-node scope %)]
+        transpile-scoped #(transpile-node scope %)
+        ast (filter (complement skip-node?) ast)]
     (->> (map transpile-scoped ast)
          (group-maps)
          (insert-resources-top-level))))

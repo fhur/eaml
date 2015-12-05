@@ -103,4 +103,10 @@
             (recur tail clashes (conj result x))))))))
 
 
-
+(defn contains-all?
+  "Returns true if the given map contains all the specified keys"
+  [m & ks]
+  (if (empty? ks)
+    true
+    (and (contains? m (first ks))
+         (contains-all? (rest ks)))))
