@@ -43,8 +43,9 @@
                       [attr]
                     :else (raise! (itp "Unrecognized attr: #{attr}"))))
             attrs)
-       (flat-coll)))
-
+       (flat-coll)
+       (remove-first-duplicates (fn [{name :name config :config}]
+                                  [name config]))))
 
 (defn transpile-style
   "Return a map of config => style XmlStruct"

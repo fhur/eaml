@@ -96,3 +96,14 @@
                            (item "android:textSize" "10dp")))})
 
 
+(expected-when "mixins override any style attrs set by the style" transpile-str
+  when  ["mixin mixinA { attr: 12dp; }
+          mixin mixinB { attr: 14dp; }
+          style Foo {
+            attr: 10dp;
+            mixinA();
+            mixinB();
+          }"]
+     =  {:default (resources
+                    (style {:name "Foo"}
+                           (item "attr" "14dp")))})
