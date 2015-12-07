@@ -102,6 +102,18 @@
             (recur tail (conj clashes x) result)
             (recur tail clashes (conj result x))))))))
 
+(defn reduce-indexed
+  "Equivalent to reduce but f takes three arguments:
+   the reduction, index and value and value."
+  [f init coll]
+  (loop [reduction init
+         coll coll
+         index 0]
+    (if (empty? coll)
+      reduction
+      (recur (f reduction index (first coll))
+             (rest coll)
+             (inc index)))))
 
 (defn contains-all?
   "Returns true if the given map contains all the specified keys"
@@ -110,3 +122,20 @@
     true
     (and (contains? m (first ks))
          (contains-all? (rest ks)))))
+
+(defn remove-first-duplicates
+  "Removes all duplicates from the given list, preserves the last
+  duplicate. Two elements a and b are considered a duplicate if f(a) == f(b)
+  Example (remove-first-duplicates keys [{:b 0} {:a 1} {:a 2} {:b 1}]) will result in
+  [{:a 2} {:b 1}]"
+  [f coll]
+  (let [duplicates (reduce-indexed (fn [reduction index x]
+                                     (assoc reduction (f x) [index x]))
+                                   {} coll)
+        without-dups (reduce-indexed (fn [reduction index x]
+                                       (if (= (get duplicates (f x))
+                                              [index x])
+                                         (conj reduction x)
+                                         reduction))
+                                     [] coll)]
+    without-dups))

@@ -54,3 +54,9 @@
   when [[]]  = false
   when [[1]] = true)
 
+(expected-when "remove-first-duplicates removes all duplicates and keeps the
+                last one" remove-first-duplicates
+  when [keys [{:b 0} {:a 1} {:a 2} {:b 1}]] = [{:a 2} {:b 1}]
+  when [:a [{:a 0 :b 0} {:a 0 :b 1} {:a 1 :b 0} {:a 1 :b 1} {:a 0 :b "last one"}]] =
+       [{:a 1 :b 1} {:a 0 :b "last one"}])
+
