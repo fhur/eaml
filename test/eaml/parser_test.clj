@@ -90,13 +90,15 @@
            colorPrimaryDark: #ff0000;
            android:textSize: 12sp;
            android:background: @null;
+           foo: @android:foo/bar;
          }"]
      = {:id "FooBar123"
         :node :style
         :parent "Foo"
         :attrs [{:name "colorPrimaryDark" :value "#ff0000" :config :default}
                 {:name "android:textSize" :value "12sp" :config :default}
-                {:name "android:background" :value "@null" :config :default}]}
+                {:name "android:background" :value "@null" :config :default}
+                {:name "foo" :value "@android:foo/bar" :config :default}]}
 
   when ["style Foo < Bar {
           android:textColor: #123;
