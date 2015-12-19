@@ -44,7 +44,7 @@
          (insert-resources-top-level))))
 
 (defn transpile-str
-  "Equivalent to transpile but takes a eaml program string as input instead
+  "Equivalent to transpile but takes an eaml program string as input instead
   of an AST and transpiles it."
   [string]
   (let [ast (parser/parse-str string)]

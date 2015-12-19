@@ -101,6 +101,30 @@ style RedButton < Button {
 }
 ```
 
+Mixins can define behaviour for multiple configurations as follows:
+
+```
+mixin redText {
+  android:textColor: red;
+  &:v21 {
+    android:textColor: fancy_red;
+  }
+}
+
+style RedButton < Button {
+  redText();
+}
+```
+NOTE: you cannot invoke a mixin from inside a configuration block:
+
+```
+style RedButton < Button {
+  &:v21 {
+    redText(); # THIS WILL THROW AN ERROR!
+  }
+}
+```
+
 ## Multiple configuration support
 Eaml styles also come with built in syntax to support multiple configurations
 as follows:

@@ -98,12 +98,44 @@
 
 (expected-when "mixins override any style attrs set by the style" transpile-str
   when  ["mixin mixinA { attr: 12dp; }
-          mixin mixinB { attr: 14dp; }
+          mixin mixinB {
+            attr: 14dp;
+            &:v21 { attr: 16dp; }
+          }
           style Foo {
             attr: 10dp;
             mixinA();
+            &:v21 {
+              attr: 20dp;
+            }
             mixinB();
           }"]
      =  {:default (resources
                     (style {:name "Foo"}
-                           (item "attr" "14dp")))})
+                           (item "attr" "14dp")))
+         :v21     (resources
+                    (style {:name "Foo"}
+                           (item "attr" "16dp")))})
+
+(expected-when "mixin provide a form of including common style attributes"
+  transpile-str
+  when  ["color main_color: #f0f0f0;
+          color main_color_lighter: #f2f2f2;
+          mixin mainBackgroundColored {
+            android:background: main_color;
+            &:v21 {
+              android:background: main_color_lighter;
+            }
+          }
+          style Foo {
+            mainBackgroundColored();
+          }"]
+     =  {:default (resources
+                    (color "main_color" "#f0f0f0")
+                    (color "main_color_lighter" "#f2f2f2")
+                    (style {:name "Foo"}
+                           (item "android:background" "@color/main_color")))
+         :v21     (resources
+                    (style {:name "Foo"}
+                           (item "android:background" "@color/main_color_lighter")))})
+

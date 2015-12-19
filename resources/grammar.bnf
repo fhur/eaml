@@ -22,7 +22,7 @@ simple-res-config        = config-name <':'> simple-res-value <';'>
                          | integer-literal
 
 (* styles *)
-style-def     = <'style'> identifier (<'<'> identifier)? <'{'> attrs <'}'>
+style-def     = <'style'> identifier (<'<'> parent-iden)? <'{'> attrs <'}'>
 config-block  = <'&:'> config-names <'{'> attr-def* <'}'>
 config-names  = config-name (<','> config-name)*
 
@@ -42,6 +42,7 @@ mixin-call    = identifier <'('> <')'> <';'>
 
 (* tokens *)
 <identifier>    = #"[a-zA-Z]\w+"
+<parent-iden>   = #"[a-zA-Z][.\w]+"
 pointer         = #"[a-zA-Z]\w+"
 boolean-literal = 'true' | 'false'
 string-literal  = #'".*?"' | #"'.*?'"
@@ -49,5 +50,5 @@ integer-literal = #"\d+"
 color-literal   = #'#[a-fA-F0-9]{3}([a-fA-F0-9]{3})?'
 dimen-literal   = #'\d+(sp|dp|px|dip)'
 config-name     = #"[a-z][a-z0-9]*(-[a-z0-9]+)*"
-<attr-name>     = #"[a-z]+(:\w+)*"
-native-pointer  = #"@\w+/\w+"
+<attr-name>     = #"[a-zA-Z]+(:\w+)*"
+native-pointer  = #"@null|@\w+/\w+"

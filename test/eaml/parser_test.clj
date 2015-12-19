@@ -80,21 +80,23 @@
         :parent nil
         :attrs []}
 
-  when ["style FooBar < Foo {}"]
+  when ["style FooBar < Foo.Bar123.Baz {}"]
      = {:id "FooBar"
         :node :style
-        :parent "Foo"
+        :parent "Foo.Bar123.Baz"
         :attrs []}
 
   when ["style FooBar123 < Foo {
-           android:textColor: #ff0000;
+           colorPrimaryDark: #ff0000;
            android:textSize: 12sp;
+           android:background: @null;
          }"]
      = {:id "FooBar123"
         :node :style
         :parent "Foo"
-        :attrs [{:name "android:textColor" :value "#ff0000" :config :default}
-                {:name "android:textSize" :value "12sp" :config :default}]}
+        :attrs [{:name "colorPrimaryDark" :value "#ff0000" :config :default}
+                {:name "android:textSize" :value "12sp" :config :default}
+                {:name "android:background" :value "@null" :config :default}]}
 
   when ["style Foo < Bar {
           android:textColor: #123;
