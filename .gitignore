@@ -10,5 +10,7 @@ pom.xml.asc
 
 *.swp
 
+tmp/
+
 .idea/
 *.iml
