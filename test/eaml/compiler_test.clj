@@ -68,6 +68,22 @@
                            (item "color" "#f00")
                            (item "bar" "12dp")))}
 
+  when ["style AppTheme < Theme.AppCompat.Light.NoActionBar {
+           android:windowBackground: @null;
+           colorPrimary: @color/red_1;
+           colorPrimaryDark: @android:color/black;
+           foo123: @style/SpinnerItem;
+           bar123qwe: @style/Foo.Bar.Baz123;
+         }"]
+     = {:default (resources
+                   (style {:name "AppTheme" :parent "Theme.AppCompat.Light.NoActionBar"}
+                          (item "android:windowBackground" "@null")
+                          (item "colorPrimary" "@color/red_1")
+                          (item "colorPrimaryDark" "@android:color/black")
+                          (item "foo123" "@style/SpinnerItem")
+                          (item "bar123qwe" "@style/Foo.Bar.Baz123")))}
+
+
   when  ["style Button < BaseButton {
             android:textSize: 12dp;
             android:background: @drawable/btn_back;

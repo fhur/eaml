@@ -50,5 +50,5 @@ integer-literal = #"\d+"
 color-literal   = #'#[a-fA-F0-9]{3}([a-fA-F0-9]{3})?'
 dimen-literal   = #'\d+(sp|dp|px|dip)'
 config-name     = #"[a-z][a-z0-9]*(-[a-z0-9]+)*"
-<attr-name>     = #"[a-zA-Z]+(:\w+)*"
-native-pointer  = #"@(android:)?\w+(/\w+)?"
+<attr-name>     = #"[\w\d]+(:[\w\d]+)*"
+native-pointer  = #"@(android:)?\w+(/\w[\w\.]+)?"

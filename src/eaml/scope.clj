@@ -20,6 +20,10 @@
   [parsed]
   (= parsed :pointer))
 
+(defn null?
+  [parsed]
+  (= parsed :native-null))
+
 (defn native-res?
   [parsed]
   (= parsed :native-pointer))
@@ -31,7 +35,8 @@
 (defn parse-expr
   [string]
   (case-match string
-    #"\A@.*?/.*"          :native-pointer
+    #"\A@null"            :native-null
+    #"\A@.*?(/.*)"        :native-pointer
     #"\A#[a-fA-F\d]{3}"   :color
     #"\A#[a-fA-F\d]{6}"   :color
     #"\A#[a-fA-F\d]{8}"   :color
@@ -55,7 +60,9 @@
 (defn obtain-type
   [expr scope]
   (let [parsed (parse-expr expr)]
-    (cond (literal? parsed)
+    (cond (null? parsed)
+            parsed
+          (literal? parsed)
             parsed
           (native-res? parsed)
             (->> (re-find #"@(.*?)/" expr)
@@ -80,6 +87,8 @@
             (if (= :string parsed)
               (remove-quotes expr)
               expr)
+          (null? parsed)
+            expr
           (pointer? parsed)
             (let [resolved-type (obtain-type expr scope)]
               (if (or (= type :any) (= type resolved-type))
