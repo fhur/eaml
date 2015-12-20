@@ -17,7 +17,9 @@
 (defn config-writer
   [root config]
   (let [config-name (name config)
-        dir (itp "#{root}/values-#{config-name}")
+        dir (if (= :default config)
+              (itp "#{root}/values")
+              (itp "#{root}/values-#{config-name}"))
         file-path (itp "#{dir}/values.xml")]
     (mkdirs! dir)
     (writer file-path)))
