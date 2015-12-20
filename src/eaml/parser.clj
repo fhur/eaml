@@ -131,6 +131,8 @@
 
 
 (defn parse-dir
+  "Finds all .eaml files under the given root-path (folder) recursively and returns
+  an AST. See parse-str"
   [root-path]
   (->> (filter-tree root-path (extension-filter "eaml"))
        (map read-file)

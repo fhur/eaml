@@ -1,3 +1,37 @@
+# Planned features
+- Gradle integration [ ]
+- Android studio plugin [ ]
+  - Syntax highlighting
+  - Compile from IDE
+  - Go to definition
+- Mixins with arguments e.g. [ ]
+```
+mixin coloredText(textColor, backgroundColor) {
+  android:textColor: textColor;
+  android:backgroundColor: backgroundColor;
+}
+```
+Which could then be invoked using `coloredText(#f00,#fff)` inside a Style.
+- Reverse compiler: cleanup your existing styles. [ ]
+- Detailed documentation [ ]
+- Type checking at compile time [ ]
+
+# eaml 0.4 - 1450616768
+
+- Added support for `@null`
+- Added mixins with no arguments:
+```
+mixin redText {
+  android:textColor: #f00;
+}
+
+style RedButton < Button {
+  redText();
+}
+```
+- Mixins with arguments will come in the next version
+- Fixed several issues with native resource pointers (e.g. @foo/bar)
+
 # eaml 0.3.0 - 1448745045
 
 Main features:
