@@ -80,6 +80,12 @@ dimen button_paddings {
   default: 4dp;
   land: 8dp;
 }
+
+# Support for certain features
+bool has_ripples {
+  v21: true;
+  default: false;
+}
 ```
 
 ## Defining styles
@@ -129,19 +135,36 @@ style RedButton < Button {
 }
 ```
 
+In this case `&:v21 { ... }` is called a configuration block for `v21`.
+You can add as many attributes as you want inside a configuration block.
+*NOTE*: Eaml technically does not know about Android's configuration management system so
+whatever configuration identifier you specify will be used to create a folder with
+the given name e.g. `&:foo-bar { ... }` will create `res/values-foo-bar/styles.xml`
+which will never be picked up by the Android OS.
+
 ## Mixins
 In cases where you would like to reuse functionality from more than one source
 you can use mixins. Mixins are for most purposes identical to styles except for
 the fact that they cannot inherit from other `mixins` or `styles`.
 
+Example:
 ```
 # A simple mixin that just sets the text color to red.
 mixin redText {
   android:textColor: red;
 }
 
+mixin bigText {
+  android:textSize: 28sp;
+}
+
 style RedButton < Button {
-  redText()
+  redText();
+}
+
+style BigRedButton < Button {
+  redText();
+  bigText();
 }
 ```
 
