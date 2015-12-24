@@ -10,12 +10,6 @@ several different configurations with a minimal code base.
 Read the [release notes](./doc/release_notes.md) to see what features
 are implemented in the current release.
 
-## A short introduction
-
-This simple guide will give you a feel of the eaml syntax. For a complete
-understanding of the eaml syntax please see the [documentation](./doc/intro.md)
-section. (TODO: docs not ready)
-
 Language QuickStart
 ===================
 
