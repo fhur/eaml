@@ -1,10 +1,12 @@
 # Planned features
-- Gradle integration [ ]
-- Android studio plugin [ ]
+
+- [ ] Remove `;` to indicate line termination.
+- [ ] Gradle integration
+- [ ] Android studio plugin
   - Syntax highlighting
   - Compile from IDE
   - Go to definition
-- Mixins with arguments e.g. [ ]
+- [ ] Mixins with arguments e.g.
 ```
 mixin coloredText(textColor, backgroundColor) {
   android:textColor: textColor;
@@ -12,9 +14,19 @@ mixin coloredText(textColor, backgroundColor) {
 }
 ```
 Which could then be invoked using `coloredText(#f00,#fff)` inside a Style.
-- Reverse compiler: cleanup your existing styles. [ ]
-- Detailed documentation [ ]
-- Type checking at compile time [ ]
+- [ ] Reverse compiler: cleanup your existing styles.
+- [ ] Detailed documentation
+- [ ] Type checking at compile time
+
+# eaml 0.5 - WIP
+
+- Eaml is now a command line app. To run:
+```bash
+# will create an ubjerjar in target/{something}-standalone.jar
+lein uberjar
+# execute it and show --help banner
+java -jar target/{something}-standalone.jar --help
+```
 
 # eaml 0.4 - 1450616768
 
