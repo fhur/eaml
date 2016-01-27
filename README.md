@@ -181,6 +181,12 @@ style RedButton < Button {
 }
 ```
 
+#### Android Studio Support
+
+There is an Android Studio being developed in [fhur/eaml-idea](https://github.com/fhur/eaml-idea).
+The plugin is still under construction but it will offer easy gradle integration, syntax highlighting,
+auto completion and other nice features.
+
 #### Feature requests
 
 eaml is still in its infancy and we are very interested in understanding
